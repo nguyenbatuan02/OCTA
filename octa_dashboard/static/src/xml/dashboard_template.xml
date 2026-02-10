@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="octa_dashboard.DashboardMain">
+        <div class="o_action" style="padding:20px; background:#f5f5f5; min-height:100vh;">
+
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:12px;">
+
+                <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #4c9aff; border-radius:8px; padding:16px;">
+                    <div style="color:#888; font-size:13px;">Tôi làm</div>
+                    <div style="font-size:32px; font-weight:bold;" t-esc="state.data.my_tasks?.total || 0"/>
+                    <div style="font-size:12px; color:#888;">
+                        <span style="color:orange;">■</span> <t t-esc="state.data.my_tasks?.not_done || 0"/> chưa xong
+                    </div>
+                    <div style="font-size:12px; color:#888;">
+                        <span style="color:#4c9aff;">■</span> <t t-esc="state.data.my_tasks?.done || 0"/> đã đóng
+                    </div>
+                </div>
+
+                <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #36b37e; border-radius:8px; padding:16px;">
+                    <div style="color:#888; font-size:13px;">Tôi giao</div>
+                    <div style="font-size:32px; font-weight:bold;" t-esc="state.data.assigned?.total || 0"/>
+                    <div style="font-size:12px; color:#888;">
+                        <span style="color:orange;">■</span> <t t-esc="state.data.assigned?.not_done || 0"/> chưa xong
+                    </div>
+                    <div style="font-size:12px; color:#888;">
+                        <span style="color:#4c9aff;">■</span> <t t-esc="state.data.assigned?.done || 0"/> đã đóng
+                    </div>
+                </div>
+
+                <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #ffab00; border-radius:8px; padding:16px;">
+                    <div style="color:#888; font-size:13px;">Tôi giám sát</div>
+                    <div style="font-size:32px; font-weight:bold;" t-esc="state.data.supervisor?.total || 0"/>
+                    <div style="font-size:12px; color:#888;">
+                        <span style="color:orange;">■</span> <t t-esc="state.data.supervisor?.not_done || 0"/> chưa xong
+                    </div>
+                    <div style="font-size:12px; color:#888;">
+                        <span style="color:#4c9aff;">■</span> <t t-esc="state.data.supervisor?.done || 0"/> đã đóng
+                    </div>
+                </div>
+
+                <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #a78bfa; border-radius:8px; padding:16px;">
+                    <div style="color:#888; font-size:13px;">Tôi liên quan</div>
+                    <div style="font-size:32px; font-weight:bold;" t-esc="state.data.related?.total || 0"/>
+                    <div style="font-size:12px; color:#888;">
+                        <span style="color:orange;">■</span> <t t-esc="state.data.related?.not_done || 0"/> chưa xong
+                    </div>
+                    <div style="font-size:12px; color:#888;">
+                        <span style="color:#4c9aff;">■</span> <t t-esc="state.data.related?.done || 0"/> đã đóng
+                    </div>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px;">
+
+                <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #63b3ed; border-radius:8px; padding:16px;">
+                    <div style="color:#888; font-size:13px;">Đang thực hiện</div>
+                    <div style="font-size:32px; font-weight:bold;" t-esc="state.data.in_progress || 0"/>
+                </div>
+
+                <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #f6ad55; border-radius:8px; padding:16px;">
+                    <div style="color:#888; font-size:13px;">Xử lý hôm nay</div>
+                    <div style="font-size:32px; font-weight:bold;" t-esc="state.data.today || 0"/>
+                </div>
+
+                <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #fc8181; border-radius:8px; padding:16px;">
+                    <div style="color:#888; font-size:13px;">Xử lý trong tuần</div>
+                    <div style="font-size:32px; font-weight:bold;" t-esc="state.data.week || 0"/>
+                </div>
+
+                <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #f56565; border-radius:8px; padding:16px;">
+                    <div style="color:#888; font-size:13px;">Quá hạn</div>
+                    <div style="font-size:32px; font-weight:bold;" t-esc="state.data.overdue || 0"/>
+                </div>
+            </div>
+
+            <!-- Tabs chọn danh sách -->
+            <div style="display:flex; gap:0; background:#fff; border-bottom:1px solid #ddd;">
+                <t t-foreach="state.tabs" t-as="tab" t-key="tab.key">
+                    <div t-att-style="'padding:10px 20px; cursor:pointer; font-size:13px; border-bottom:2px solid ' + (state.activeTab === tab.key ? '#4c6ef5' : 'transparent') + '; color:' + (state.activeTab === tab.key ? '#4c6ef5' : '#666') + '; font-weight:' + (state.activeTab === tab.key ? '600' : '400')"
+                         t-on-click="() => this.switchTab(tab.key)">
+                        <t t-esc="tab.label"/>
+                    </div>
+                </t>
+            </div>
+
+            <!-- Bảng danh sách task -->
+            <div style="background:#fff;">
+                <!-- Header -->
+                <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr; padding:10px 16px; background:#f8f9fa; border-bottom:1px solid #eee; font-size:12px; color:#888; font-weight:600;">
+                    <div>Tiêu đề</div>
+                    <div>Trạng thái</div>
+                    <div>Tiến độ</div>
+                    <div>Người thực hiện</div>
+                </div>
+
+                <!-- Rows -->
+                <t t-if="state.tasks.length === 0">
+                    <div style="padding:40px; text-align:center; color:#aaa;">
+                        Không có công việc nào
+                    </div>
+                </t>
+                <t t-foreach="state.tasks" t-as="task" t-key="task.id">
+                    <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr; padding:12px 16px; border-bottom:1px solid #f0f0f0; align-items:center; cursor:pointer;"
+                         t-on-click="() => this.openTask(task.id)">
+                        <div style="font-size:14px;" t-esc="task.name"/>
+                        <div>
+                            <span t-att-style="'padding:3px 10px; border-radius:4px; font-size:12px; background:' + (task.is_overdue ? '#fef2f2' : '#e3f2fd') + '; color:' + (task.is_overdue ? '#dc2626' : '#1976d2')"
+                                  t-esc="task.stage_name"/>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <div style="flex:1; height:6px; background:#eee; border-radius:3px;">
+                                <div t-att-style="'height:100%; border-radius:3px; background:#4c6ef5; width:' + task.progress + '%'"/>
+                            </div>
+                            <span style="font-size:12px; color:#888;"><t t-esc="task.progress"/>%</span>
+                        </div>
+                        <div style="font-size:13px; color:#374151;" t-esc="task.user_names"/>
+                    </div>
+                </t>
+            </div>
+
+        </div>
+    </t>
+</templates>
