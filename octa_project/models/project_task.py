@@ -20,3 +20,13 @@ class ProjectTask(models.Model):
         'supervisor_id',
         string='Người giám sát'
     )
+
+    def write(self, vals):
+        res = super().write(vals)
+        if 'stage_id' in vals:
+            for task in self:
+                stage = task.stage_id
+                if stage and stage.approver_id:
+                    task.user_ids = [(6, 0, [stage.approver_id.id])]
+
+        return res

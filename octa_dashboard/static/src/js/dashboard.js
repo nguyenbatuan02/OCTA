@@ -53,6 +53,35 @@ class OctaDashboard extends Component {
             target: "current",
         });
     }
+
+    openTaskList(type) {
+        const uid = this.env.services.user.userId;
+
+        let domain = [];
+
+        if (type === "my_tasks") {
+            domain = [["user_ids", "in", [uid]]];
+        } else if (type === "assigned") {
+            domain = [["create_uid", "=", uid]];
+        } else if (type === "supervisor") {
+            domain = [["supervisor_ids", "in", [uid]]];
+        } else if (type === "related") {
+            domain = [["related_user_ids", "in", [uid]]];
+        }
+
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            name: "Danh sách công việc",
+            res_model: "project.task",
+            views: [
+                [false, "list"],
+                [false, "form"]
+            ],
+            domain: domain,
+            target: "current",
+        });
+    }
+
 }
 
 registry.category("actions").add("octa_dashboard", OctaDashboard);
