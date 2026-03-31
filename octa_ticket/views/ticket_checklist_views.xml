@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_ticket_checklist_tree_inline" model="ir.ui.view">
+    <field name="name">ticket.checklist.tree.inline</field>
+    <field name="model">ticket.checklist</field>
+    <field name="arch" type="xml">
+      <tree editable="bottom" decoration-muted="done == True">
+        <field name="sequence" widget="handle"/>
+        <field name="done" widget="boolean_toggle"/>
+        <field name="name"/>
+        <field name="attachment_ids" widget="many2many_binary"/>
+        <field name="manager_comment"/>
+        <field name="manager_score"/>
+      </tree>
+    </field>
+  </record>
+</odoo>

@@ -4,3 +4,5 @@ __pycache__/
 *.mo
 .vscode/
 .idea/
+.conf
+venv

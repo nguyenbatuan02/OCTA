@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_ticket_import_wizard_form" model="ir.ui.view">
+    <field name="name">ticket.import.wizard.form</field>
+    <field name="model">ticket.import.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Import Ticket từ Excel">
+        <sheet>
+
+          <group invisible="state != 'draft'">
+            <group string="Cấu hình import">
+              <field name="project_id"/>
+              <field name="auto_close" widget="boolean_toggle"/>
+            </group>
+            <group string="Chọn file Excel">
+              <field name="file" widget="binary" filename="filename"/>
+              <field name="filename" invisible="1"/>
+              <field name="state" invisible="1"/>
+            </group>
+          </group>
+
+          <group invisible="state != 'done'" string="Kết quả Import">
+            <group>
+              <field name="result_total"   readonly="1"/>
+              <field name="result_success" readonly="1"/>
+              <field name="result_fail"    readonly="1"/>
+            </group>
+            <group>
+              <field name="result_log" readonly="1" widget="text"/>
+            </group>
+          </group>
+
+        </sheet>
+        <footer>
+          <button string="Import" type="object" name="action_import"
+                  class="btn-primary"
+                  invisible="state != 'draft'"/>
+          <button string="Import thêm" type="object" name="action_reset"
+                  class="btn-secondary"
+                  invisible="state != 'done'"/>
+          <button string="Đóng" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <!-- Action mở wizard -->
+  <record id="action_ticket_import_wizard" model="ir.actions.act_window">
+    <field name="name">Import Ticket từ Excel</field>
+    <field name="res_model">ticket.import.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+
+</odoo>

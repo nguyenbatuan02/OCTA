@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_octa_ticket_form" model="ir.ui.view">
+    <field name="name">octa.ticket.form</field>
+    <field name="model">project.task</field>
+    <field name="inherit_id" ref="project.view_task_form2"/>
+    <field name="arch" type="xml">
+
+      <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
+        <attribute name="invisible">1</attribute>
+      </xpath>
+
+      <xpath expr="//sheet/group" position="after">
+        <group>
+            <group string="Thông tin sự cố">
+                <field name="issue_type"/>
+                <field name="ticket_type" readonly="1"/>
+                <field name="source" readonly="1"/>
+            </group>
+            <group string="SLA">
+                <field name="sla_deadline"/>
+                <field name="is_overdue_sla" widget="boolean_toggle" readonly="1"/>
+                <field name="date_closed" readonly="1"/>
+            </group>
+        </group>
+
+        <group string="Đầu vào xử lý" invisible="not issue_type">
+            <group>
+                <field name="customer_info"
+                    invisible="issue_type not in ['card_error','deposit_complaint','msg_channels']"/>
+                <field name="source_complaint"
+                    invisible="issue_type not in ['card_error','topup_error','msg_channels']"/>
+                <field name="buy_datetime"
+                    invisible="issue_type not in ['card_error','deposit_complaint']"/>
+                <field name="ncc"
+                    invisible="issue_type not in ['card_error','txn_monitor']"/>
+                <field name="card_code"
+                    invisible="issue_type != 'card_error'"/>
+                <field name="network"
+                    invisible="issue_type not in ['card_error','topup_error']"/>
+                <field name="transaction_id"
+                    invisible="issue_type not in ['topup_error','txn_monitor']"/>
+                <field name="phone"
+                    invisible="issue_type not in ['topup_error','deposit_complaint']"/>
+            </group>
+            <group>
+                <field name="amount"
+                    invisible=" issue_type != 'deposit_complaint'"/>
+                <field name="bank_name"
+                    invisible="issue_type != 'deposit_complaint'"/>
+                <field name="gateway_name"
+                    invisible="issue_type not in ['gateway_39','gateway_70','txn_monitor']"/>
+            </group>
+        </group>
+    </xpath>
+
+      <xpath expr="//sheet/notebook" position="inside">
+        <page string="Nhiệm vụ" name="checklist_tasks">
+
+          <field name="checklist_progress" widget="progressbar"/>
+
+          <field name="checklist_ids">
+            <tree editable="bottom" decoration-muted="done == True">
+              <field name="sequence" widget="handle"/>
+              <field name="done" widget="boolean_toggle"/>
+              <field name="name"/>
+              <field name="attachment_ids" widget="many2many_binary"/>
+              <field name="manager_comment"/>
+              <field name="manager_score"/>
+            </tree>
+          </field>
+        
+          <div class="mt-3" invisible="ticket_type not in ['periodic','shift','continuous']">
+
+
+            <button name="action_log_check"
+                    string="Ghi nhận lần kiểm tra"
+                    type="object"
+                    class="btn-primary"/>
+
+            <span class="ms-3 text-muted">
+              Số lần đã kiểm tra:
+              <field name="check_log_count" readonly="1"/>
+            </span>
+
+          </div>
+
+        </page>
+
+
+        <page string="Lịch sử kiểm tra" name="check_log"
+            invisible="ticket_type not in ['periodic','shift','continuous']">
+
+          <field name="check_log_ids">
+            <tree decoration-success="result == 'normal'"
+                  decoration-warning="result == 'warning'"
+                  decoration-danger="result in ['incident','escalate']"
+                  create="false" delete="false">
+
+              <field name="check_time"/>
+              <field name="checked_by"/>
+              <field name="result"/>
+              <field name="note"/>
+              <field name="attachment_ids" widget="many2many_binary"/>
+
+            </tree>
+          </field>
+
+        </page>
+
+      </xpath>
+
+    </field>
+  </record>
+
+
+  <record id="view_octa_ticket_list" model="ir.ui.view">
+    <field name="name">octa.ticket.list</field>
+    <field name="model">project.task</field>
+    <field name="arch" type="xml">
+      <tree decoration-danger="is_overdue_sla == True"
+            decoration-muted="stage_id.fold == True">
+
+        <field name="name"/>
+        <field name="issue_type"/>
+        <field name="ticket_type"/>
+        <field name="source"/>
+        <field name="user_ids" widget="many2many_avatar"/>
+        <field name="stage_id"/>
+        <field name="sla_deadline"/>
+        <field name="is_overdue_sla" widget="boolean"/>
+        <field name="checklist_progress" widget="progressbar"/>
+        <field name="check_log_count"/>
+        <field name="date_closed"/>
+        <field name="create_date"/>
+
+      </tree>
+    </field>
+  </record>
+
+
+  <record id="view_octa_ticket_kanban" model="ir.ui.view">
+    <field name="name">octa.ticket.kanban</field>
+    <field name="model">project.task</field>
+    <field name="arch" type="xml">
+      <kanban default_group_by="stage_id">
+
+        <field name="name"/>
+        <field name="issue_type"/>
+        <field name="ticket_type"/>
+        <field name="user_ids"/>
+        <field name="sla_deadline"/>
+        <field name="is_overdue_sla"/>
+        <field name="checklist_progress"/>
+
+        <templates>
+          <t t-name="kanban-box">
+            <div t-attf-class="oe_kanban_card oe_kanban_global_click #{record.is_overdue_sla.raw_value ? 'border-danger' : ''}">
+
+              <strong><field name="name"/></strong>
+
+              <div class="mt-1">
+                <span class="badge text-bg-secondary">
+                  <field name="issue_type"/>
+                </span>
+
+                <span t-if="record.is_overdue_sla.raw_value"
+                      class="badge text-bg-danger">Quá SLA</span>
+              </div>
+
+              <div class="mt-2">
+                <field name="checklist_progress" widget="progressbar"/>
+                <field name="user_ids" widget="many2many_avatar"/>
+              </div>
+
+            </div>
+          </t>
+        </templates>
+
+      </kanban>
+    </field>
+  </record>
+
+
+  <record id="view_octa_ticket_search" model="ir.ui.view">
+    <field name="name">octa.ticket.search</field>
+    <field name="model">project.task</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name" string="Tìm kiếm"/>
+        <field name="issue_type"/>
+        <field name="card_code"/>
+        <field name="transaction_id"/>
+        <field name="customer_info"/>
+        <separator/>
+        <filter name="overdue_sla"   string=" Quá SLA"
+            domain="[('sla_deadline','!=',False),
+                    ('sla_deadline','&lt;', context_today()),
+                    ('stage_id.fold','=',False)]"/>
+        <filter name="done"          string="Đã hoàn thành"  domain="[('stage_id.fold','=',True)]"/>
+        <filter name="not_done"      string="⏳ Chưa hoàn thành" domain="[('stage_id.fold','=',False)]"/>
+        <separator/>
+        <filter name="type_incident" string="Sự vụ"      domain="[('ticket_type','=','incident')]"/>
+        <filter name="type_periodic" string="Định kỳ"    domain="[('ticket_type','=','periodic')]"/>
+        <filter name="type_shift"    string="Đầu ca"     domain="[('ticket_type','=','shift')]"/>
+        <separator/>
+        <filter name="source_api"    string="Từ API"     domain="[('source','=','api')]"/>
+        <filter name="source_excel"  string="Từ Excel"   domain="[('source','=','excel')]"/>
+        <separator/>
+        <filter name="closed_today"  string="Hoàn thành hôm nay"
+                domain="[('date_closed','&gt;=', context_today())]"/>
+        <group expand="0" string="Nhóm theo">
+          <filter name="by_issue"       string="Loại sự cố"     context="{'group_by':'issue_type'}"/>
+          <filter name="by_ticket_type" string="Loại ticket"    context="{'group_by':'ticket_type'}"/>
+          <filter name="by_user"        string="Người thực hiện" context="{'group_by':'user_ids'}"/>
+          <filter name="by_stage"       string="Giai đoạn"      context="{'group_by':'stage_id'}"/>
+          <filter name="by_create_date" string="Theo ngày tạo"  context="{'group_by':'create_date:day'}"/>
+          <filter name="by_date_closed" string="Theo ngày đóng" context="{'group_by':'date_closed:day'}"/>
+          <filter name="by_source"      string="Nguồn"          context="{'group_by':'source'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="view_ticket_check_log_wizard_form" model="ir.ui.view">
+    <field name="name">ticket.check.log.wizard.form</field>
+    <field name="model">ticket.check.log.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Ghi nhận lần kiểm tra">
+        <sheet>
+          <group>
+            <group>
+              <field name="result"/>
+              <field name="reset_checklist" widget="boolean_toggle"/>
+            </group>
+            <group>
+              <field name="note" placeholder="Mô tả chi tiết kết quả lần kiểm tra này..."/>
+            </group>
+          </group>
+          <group string="Bằng chứng đính kèm">
+            <field name="attachment_ids" widget="many2many_binary" nolabel="1"/>
+          </group>
+        </sheet>
+        <footer>
+          <button string="Xác nhận" type="object" name="action_confirm" class="btn-primary"/>
+          <button string="Huỷ" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+
+  <record id="action_octa_ticket_all" model="ir.actions.act_window">
+    <field name="name">Tất cả Tickets</field>
+    <field name="res_model">project.task</field>
+    <field name="view_mode">tree,kanban,form</field>
+    <field name="view_ids" eval="[
+      (5,0,0),
+      (0,0,{'view_mode':'tree',   'view_id':ref('view_octa_ticket_list')}),
+      (0,0,{'view_mode':'kanban', 'view_id':ref('view_octa_ticket_kanban')}),
+      (0,0,{'view_mode':'form'}),
+    ]"/>
+    <field name="search_view_id" ref="view_octa_ticket_search"/>
+    <field name="context">{'search_default_all_tasks': 1}</field>
+  </record>
+
+  <record id="action_octa_ticket_incident" model="ir.actions.act_window">
+    <field name="name">Sự vụ</field>
+    <field name="res_model">project.task</field>
+    <field name="view_mode">tree,kanban,form</field>
+    <field name="domain">[('ticket_type','=','incident')]</field>
+    <field name="view_ids" eval="[
+      (5,0,0),
+      (0,0,{'view_mode':'tree',   'view_id':ref('view_octa_ticket_list')}),
+      (0,0,{'view_mode':'kanban', 'view_id':ref('view_octa_ticket_kanban')}),
+      (0,0,{'view_mode':'form'}),
+    ]"/>
+    <field name="search_view_id" ref="view_octa_ticket_search"/>
+    <field name="context">{'search_default_all_tasks': 1}</field>
+  </record>
+
+  <record id="action_octa_ticket_periodic" model="ir.actions.act_window">
+    <field name="name">Checklist Định kỳ</field>
+    <field name="res_model">project.task</field>
+    <field name="view_mode">tree,kanban,form</field>
+    <field name="domain">[('ticket_type','in',['periodic','shift','continuous'])]</field>
+    <field name="view_ids" eval="[
+      (5,0,0),
+      (0,0,{'view_mode':'tree',   'view_id':ref('view_octa_ticket_list')}),
+      (0,0,{'view_mode':'kanban', 'view_id':ref('view_octa_ticket_kanban')}),
+      (0,0,{'view_mode':'form'}),
+    ]"/>
+    <field name="search_view_id" ref="view_octa_ticket_search"/>
+    <field name="context">{'search_default_all_tasks': 1}</field>
+  </record>
+
+  <record id="action_octa_ticket_overdue" model="ir.actions.act_window">
+    <field name="name">⚠ Quá SLA</field>
+    <field name="res_model">project.task</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[
+      ('sla_deadline','!=',False),
+      ('sla_deadline','&lt;',datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')),
+      ('stage_id.fold','=',False)
+    ]</field>
+    <field name="view_ids" eval="[
+      (5,0,0),
+      (0,0,{'view_mode':'tree','view_id':ref('view_octa_ticket_list')}),
+      (0,0,{'view_mode':'form'}),
+    ]"/>
+    <field name="search_view_id" ref="view_octa_ticket_search"/>
+    <field name="context">{'search_default_all_tasks': 1}</field>
+  </record>
+
+</odoo>

@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="tmpl_card_1" model="ticket.checklist.template">
+    <field name="issue_type">card_error</field>
+    <field name="sequence">10</field>
+    <field name="name">Tiếp nhận phản ánh — kiểm tra đủ thông tin tối thiểu (mã/serial thẻ, KH, thời điểm mua, nguồn, NCC, ảnh thẻ)</field>
+  </record>
+  <record id="tmpl_card_2" model="ticket.checklist.template">
+    <field name="issue_type">card_error</field>
+    <field name="sequence">20</field>
+    <field name="name">Xác minh nguồn thẻ — thẻ do Octa bán ra hay đối tác/NCC cấp; thuộc kho Octa, thẻ Octa sản xuất/chuyển PIN hay thẻ NCC</field>
+  </record>
+  <record id="tmpl_card_3" model="ticket.checklist.template">
+    <field name="issue_type">card_error</field>
+    <field name="sequence">30</field>
+    <field name="name">Kiểm tra trạng thái với nhà mạng — tra serial trên hệ thống hoặc gọi tổng đài nhà mạng xác minh thẻ đã nạp chưa, thời điểm nạp</field>
+  </record>
+  <record id="tmpl_card_4" model="ticket.checklist.template">
+    <field name="issue_type">card_error</field>
+    <field name="sequence">40</field>
+    <field name="name">Xử lý theo từng trường hợp — thẻ đã nạp: thông báo KH đóng phản ánh; thẻ Octa chưa dùng: hướng dẫn nạp lại / nạp hộ / đổi mã / hoàn tiền; thẻ NCC: lập khiếu nại với bên bán</field>
+  </record>
+  <record id="tmpl_card_5" model="ticket.checklist.template">
+    <field name="issue_type">card_error</field>
+    <field name="sequence">50</field>
+    <field name="name">Cập nhật kết quả — ghi đầy đủ nguyên nhân, hướng xử lý, bằng chứng xác minh; chỉ đóng ticket khi KH đã được phản hồi rõ hoặc đã chuyển đúng bộ phận</field>
+  </record>
+
+  <record id="tmpl_topup_1" model="ticket.checklist.template">
+    <field name="issue_type">topup_error</field>
+    <field name="sequence">10</field>
+    <field name="name">Tiếp nhận phản ánh — kiểm tra đủ mã giao dịch, số điện thoại, nhà cung cấp/cổng, thời điểm phát sinh, ảnh/log nếu có</field>
+  </record>
+  <record id="tmpl_topup_2" model="ticket.checklist.template">
+    <field name="issue_type">topup_error</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra phạm vi giao dịch — tra cứu hệ thống xác định GD có thuộc Octa không; nếu không thuộc Octa thì phản hồi KH và đóng ticket</field>
+  </record>
+  <record id="tmpl_topup_3" model="ticket.checklist.template">
+    <field name="issue_type">topup_error</field>
+    <field name="sequence">30</field>
+    <field name="name">Kiểm tra trạng thái GD trên portal — GD thất bại: thông báo KH đóng phản ánh; GD thành công: chuyển sang xác minh bên ngoài</field>
+  </record>
+  <record id="tmpl_topup_4" model="ticket.checklist.template">
+    <field name="issue_type">topup_error</field>
+    <field name="sequence">40</field>
+    <field name="name">Xác minh bên ngoài — kiểm tra GD thuộc đại lý nào; liên hệ tổng đài/NCC xác nhận thuê bao đã nhận tiền chưa</field>
+  </record>
+  <record id="tmpl_topup_5" model="ticket.checklist.template">
+    <field name="issue_type">topup_error</field>
+    <field name="sequence">50</field>
+    <field name="name">Xử lý theo kết quả — đã nhận tiền: phản hồi KH đóng ticket; chưa nhận: báo quản lý, gửi NCC đối soát, thực hiện hoàn tiền hoặc nạp bù</field>
+  </record>
+  <record id="tmpl_topup_6" model="ticket.checklist.template">
+    <field name="issue_type">topup_error</field>
+    <field name="sequence">60</field>
+    <field name="name">Hoàn tất — kiểm tra kết quả thực tế sau hoàn tiền/nạp bù, thông báo KH, cập nhật ticket đầy đủ bằng chứng và nguyên nhân gốc</field>
+  </record>
+
+  <record id="tmpl_gw39_1" model="ticket.checklist.template">
+    <field name="issue_type">gateway_39</field>
+    <field name="sequence">10</field>
+    <field name="name">Đăng nhập Gate Hỗn Hợp — mở các cổng cần giám sát trong ca, xác nhận dữ liệu đang cập nhật bình thường</field>
+  </record>
+  <record id="tmpl_gw39_2" model="ticket.checklist.template">
+    <field name="issue_type">gateway_39</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra tỷ lệ thất bại — nếu vượt ngưỡng 10%: lập cảnh báo, đề xuất điều chỉnh lưu lượng hoặc đóng/mở bớt GD vào cổng</field>
+  </record>
+  <record id="tmpl_gw39_3" model="ticket.checklist.template">
+    <field name="issue_type">gateway_39</field>
+    <field name="sequence">30</field>
+    <field name="name">Kiểm tra GD treo — lọc GD treo quá 3 phút; liên hệ NCC xác minh; cập nhật trạng thái GD và tạo ticket xử lý dứt điểm</field>
+  </record>
+  <record id="tmpl_gw39_4" model="ticket.checklist.template">
+    <field name="issue_type">gateway_39</field>
+    <field name="sequence">40</field>
+    <field name="name">Kiểm tra phân bổ mệnh giá — đối chiếu GD theo mệnh giá 20/50/100/200/500; thiếu mệnh giá do phân luồng sai: báo Vận hành; nguyên nhân khác: báo Kỹ thuật</field>
+  </record>
+  <record id="tmpl_gw39_5" model="ticket.checklist.template">
+    <field name="issue_type">gateway_39</field>
+    <field name="sequence">50</field>
+    <field name="name">Kiểm tra lưu lượng GD chờ nạp — nếu bất thường: xác minh nguyên nhân (nguồn mua thấp / chưa mở đủ GD / lỗi hệ thống), báo đúng đầu mối</field>
+  </record>
+  <record id="tmpl_gw39_6" model="ticket.checklist.template">
+    <field name="issue_type">gateway_39</field>
+    <field name="sequence">60</field>
+    <field name="name">Ghi nhận tình trạng cổng — tạo ticket/sự vụ nếu có GD treo, thất bại bất thường hoặc luồng cổng cần điều chỉnh</field>
+  </record>
+
+  <record id="tmpl_gw70_1" model="ticket.checklist.template">
+    <field name="issue_type">gateway_70</field>
+    <field name="sequence">10</field>
+    <field name="name">Truy cập kho thẻ — đăng nhập Gate Topup thẻ, vào kho thẻ, chọn NCC Vina, lọc dữ liệu hiển thị tồn kho hiện tại</field>
+  </record>
+  <record id="tmpl_gw70_2" model="ticket.checklist.template">
+    <field name="issue_type">gateway_70</field>
+    <field name="sequence">20</field>
+    <field name="name">So sánh với ngưỡng vận hành — đối chiếu tồn kho thực tế với ngưỡng tối thiểu do Vận hành quy định cho cổng 70</field>
+  </record>
+  <record id="tmpl_gw70_3" model="ticket.checklist.template">
+    <field name="issue_type">gateway_70</field>
+    <field name="sequence">30</field>
+    <field name="name">Phân loại mức cảnh báo — bình thường: ghi nhận; tiệm cận ngưỡng: cảnh báo vận hành; nguy cơ hết: cảnh báo chuyển cổng / đề xuất đóng cổng</field>
+  </record>
+  <record id="tmpl_gw70_4" model="ticket.checklist.template">
+    <field name="issue_type">gateway_70</field>
+    <field name="sequence">40</field>
+    <field name="name">Ghi nhận kết quả — cập nhật checklist: số tồn, thời điểm, người nhận cảnh báo, hướng xử lý đề xuất</field>
+  </record>
+  <record id="tmpl_gw70_5" model="ticket.checklist.template">
+    <field name="issue_type">gateway_70</field>
+    <field name="sequence">50</field>
+    <field name="name">Theo dõi sau cảnh báo — kiểm tra lại kỳ kế tiếp xác nhận cổng đã được điều chỉnh hoặc hàng đã được bổ sung</field>
+  </record>
+
+  <record id="tmpl_dep_1" model="ticket.checklist.template">
+    <field name="issue_type">deposit_complaint</field>
+    <field name="sequence">10</field>
+    <field name="name">Tiếp nhận — thu thập đủ thông tin: mã đại lý, số tiền nạp, ngân hàng chuyển, thời gian chuyển, ảnh/chứng từ giao dịch</field>
+  </record>
+  <record id="tmpl_dep_2" model="ticket.checklist.template">
+    <field name="issue_type">deposit_complaint</field>
+    <field name="sequence">20</field>
+    <field name="name">Tra cứu trên portal — vào Portal > Đại lý > Quản lý nạp tiền, tra theo mã đại lý và thời điểm GD xác định hệ thống đã cộng tiền chưa</field>
+  </record>
+  <record id="tmpl_dep_3" model="ticket.checklist.template">
+    <field name="issue_type">deposit_complaint</field>
+    <field name="sequence">30</field>
+    <field name="name">Xử lý theo kết quả — đã tự động cộng: thông báo KH cập nhật ticket; chưa cộng: chuyển đủ thông tin cho Kế toán, theo sát tiến độ</field>
+  </record>
+  <record id="tmpl_dep_4" model="ticket.checklist.template">
+    <field name="issue_type">deposit_complaint</field>
+    <field name="sequence">40</field>
+    <field name="name">Kiểm tra hoàn tất — sau khi tiền được cập nhật: kiểm tra lại số dư thực tế, thông báo KH, đóng ticket với kết quả cuối</field>
+  </record>
+
+  <record id="tmpl_txn_1" model="ticket.checklist.template">
+    <field name="issue_type">txn_monitor</field>
+    <field name="sequence">10</field>
+    <field name="name">Kiểm tra đầu ca — đăng nhập Portal > Báo cáo > Lịch sử GD; lọc từ cuối ca trước đến hiện tại; phân loại GD xử lý quá 10 giây và GD thất bại</field>
+  </record>
+  <record id="tmpl_txn_2" model="ticket.checklist.template">
+    <field name="issue_type">txn_monitor</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra định kỳ trong ca — lặp lại 10–30 phút/lần; mỗi lần lọc từ thời điểm lần trước để không bỏ sót GD mới</field>
+  </record>
+  <record id="tmpl_txn_3" model="ticket.checklist.template">
+    <field name="issue_type">txn_monitor</field>
+    <field name="sequence">30</field>
+    <field name="name">Xử lý GD mã thẻ đang xử lý — kho Octa còn hàng mà treo: báo Kỹ thuật; kho hết: mở phiếu báo hết hàng; qua API: báo đối tác xử lý</field>
+  </record>
+  <record id="tmpl_txn_4" model="ticket.checklist.template">
+    <field name="issue_type">txn_monitor</field>
+    <field name="sequence">40</field>
+    <field name="name">Xử lý GD mã thẻ thất bại — kiểm tra tồn kho, báo Kỹ thuật khi cần; qua API: liên hệ đối tác đối soát/khắc phục, mở ticket ghi nhận</field>
+  </record>
+  <record id="tmpl_txn_5" model="ticket.checklist.template">
+    <field name="issue_type">txn_monitor</field>
+    <field name="sequence">50</field>
+    <field name="name">Xử lý GD topup — đang xử lý: liên hệ đối tác/NCC dứt điểm; cổng 70 lỗi hệ thống: liên hệ cả đối tác dịch vụ lẫn Kỹ thuật; thất bại: mở phiếu ghi nhận nguyên nhân</field>
+  </record>
+  <record id="tmpl_txn_6" model="ticket.checklist.template">
+    <field name="issue_type">txn_monitor</field>
+    <field name="sequence">60</field>
+    <field name="name">Ghi nhận và theo dõi — mọi GD vượt ngưỡng/thất bại phải có bản ghi/checklist/ticket lưu đủ: phát sinh, hướng xử lý, kết quả cuối</field>
+  </record>
+
+  <record id="tmpl_stc_1" model="ticket.checklist.template">
+    <field name="issue_type">shift_tool_check</field>
+    <field name="sequence">10</field>
+    <field name="name">Kiểm tra tổng đài — đăng nhập, thực hiện gọi thử hoặc nhận thử, xác nhận nghe/gọi bình thường</field>
+  </record>
+  <record id="tmpl_stc_2" model="ticket.checklist.template">
+    <field name="issue_type">shift_tool_check</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra kênh cảnh báo nội bộ — vào Slack hoặc kênh tương đương, kiểm tra cảnh báo 12–24 giờ gần nhất, xác nhận hệ thống cảnh báo hoạt động</field>
+  </record>
+  <record id="tmpl_stc_3" model="ticket.checklist.template">
+    <field name="issue_type">shift_tool_check</field>
+    <field name="sequence">30</field>
+    <field name="name">Kiểm tra Telegram và các nhóm làm việc — đăng nhập, rà soát tin nhắn, nhắn thử khi cần, xác nhận các nhóm chính hoạt động bình thường</field>
+  </record>
+  <record id="tmpl_stc_4" model="ticket.checklist.template">
+    <field name="issue_type">shift_tool_check</field>
+    <field name="sequence">40</field>
+    <field name="name">Kiểm tra Zalo OA, Tawk.to và email CSKH — đăng nhập từng công cụ, kiểm tra trạng thái online, tin nhắn/thư mới, test nhanh nhận/gửi</field>
+  </record>
+  <record id="tmpl_stc_5" model="ticket.checklist.template">
+    <field name="issue_type">shift_tool_check</field>
+    <field name="sequence">50</field>
+    <field name="name">Kiểm tra biên bản bàn giao ca trước — đọc kỹ nội dung bàn giao, xác định các tồn đọng phải theo dõi trong ca mới</field>
+  </record>
+  <record id="tmpl_stc_6" model="ticket.checklist.template">
+    <field name="issue_type">shift_tool_check</field>
+    <field name="sequence">60</field>
+    <field name="name">Xác nhận nhận ca — hoàn tất checklist khi toàn bộ công cụ bình thường hoặc các lỗi đã báo đúng đầu mối và có ghi nhận rõ</field>
+  </record>
+
+  <record id="tmpl_ssc_1" model="ticket.checklist.template">
+    <field name="issue_type">shift_sales_check</field>
+    <field name="sequence">10</field>
+    <field name="name">Kiểm tra tổng thể hệ thống viễn thông — đăng nhập Portal, kiểm tra nhanh tất cả dịch vụ; xác nhận 8 giờ gần nhất không có GD thất bại do hết hàng/hết tài khoản chưa xử lý</field>
+  </record>
+  <record id="tmpl_ssc_2" model="ticket.checklist.template">
+    <field name="issue_type">shift_sales_check</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra kho mã thẻ — vào Gate mã thẻ/kho thẻ, chọn từng NCC trọng yếu, kiểm tra tồn so với ngưỡng vận hành</field>
+  </record>
+  <record id="tmpl_ssc_3" model="ticket.checklist.template">
+    <field name="issue_type">shift_sales_check</field>
+    <field name="sequence">30</field>
+    <field name="name">Kiểm tra tài khoản API bên bán — vào Portal > Đối tác > Tài khoản đối tác, kiểm tra số dư và trạng thái từng tài khoản API quan trọng</field>
+  </record>
+  <record id="tmpl_ssc_4" model="ticket.checklist.template">
+    <field name="issue_type">shift_sales_check</field>
+    <field name="sequence">40</field>
+    <field name="name">Kiểm tra các nguồn đặc thù — API vé máy bay đủ số dư tối thiểu; tài khoản BigM đủ 10 ngày bán; tài khoản Link ID/nguồn đặc thù khác đủ 7 ngày bán</field>
+  </record>
+  <record id="tmpl_ssc_5" model="ticket.checklist.template">
+    <field name="issue_type">shift_sales_check</field>
+    <field name="sequence">50</field>
+    <field name="name">Ghi nhận và mở phiếu nếu cần — ghi rõ kho/API đã kiểm tra; nếu xuống dưới ngưỡng: tạo phiếu cảnh báo, thông báo chuyên viên chuyển cổng/Kinh doanh/đối tác đúng đầu mối</field>
+  </record>
+  <record id="tmpl_ssc_6" model="ticket.checklist.template">
+    <field name="issue_type">shift_sales_check</field>
+    <field name="sequence">60</field>
+    <field name="name">Theo dõi sau cảnh báo — nếu đã mở phiếu: quay lại kiểm tra sau khi có thông tin bổ sung/điều chỉnh để xác nhận điều kiện bán hàng đã an toàn</field>
+  </record>
+
+  <record id="tmpl_mini_1" model="ticket.checklist.template">
+    <field name="issue_type">miniapp_check</field>
+    <field name="sequence">10</field>
+    <field name="name">Kiểm tra web đại lý viễn thông — truy cập bigtel.vn, đăng nhập, xác nhận các thao tác cơ bản hoạt động bình thường</field>
+  </record>
+  <record id="tmpl_mini_2" model="ticket.checklist.template">
+    <field name="issue_type">miniapp_check</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra website vé máy bay — truy cập vemaybaybigm.vn, đăng nhập, xác nhận website hoạt động bình thường</field>
+  </record>
+  <record id="tmpl_mini_3" model="ticket.checklist.template">
+    <field name="issue_type">miniapp_check</field>
+    <field name="sequence">30</field>
+    <field name="name">Kiểm tra Mini App BigM Shop — mở app, kiểm tra khả năng truy cập, đăng nhập và hiển thị cơ bản</field>
+  </record>
+  <record id="tmpl_mini_4" model="ticket.checklist.template">
+    <field name="issue_type">miniapp_check</field>
+    <field name="sequence">40</field>
+    <field name="name">Kiểm tra Mini App BigM Vé Máy Bay, BigM Quản trị bán hàng, BigM nạp tiền điện thoại, BigM nạp tài khoản game — kiểm tra truy cập, đăng nhập, hiển thị</field>
+  </record>
+  <record id="tmpl_mini_5" model="ticket.checklist.template">
+    <field name="issue_type">miniapp_check</field>
+    <field name="sequence">50</field>
+    <field name="name">Ghi nhận lỗi nếu có — chụp màn hình, báo Kỹ thuật ngay nếu phát hiện lỗi đăng nhập/hiển thị/thao tác/ảnh hưởng bán hàng</field>
+  </record>
+  <record id="tmpl_mini_6" model="ticket.checklist.template">
+    <field name="issue_type">miniapp_check</field>
+    <field name="sequence">60</field>
+    <field name="name">Chốt checklist — hoàn tất khi toàn bộ công cụ đã kiểm tra đủ hoặc các lỗi đã ghi nhận và chuyển đúng đầu mối xử lý</field>
+  </record>
+
+  <record id="tmpl_msg_1" model="ticket.checklist.template">
+    <field name="issue_type">msg_channels</field>
+    <field name="sequence">10</field>
+    <field name="name">Theo dõi liên tục — bật chuông/thông báo tổng đài, chat, email, Tawk.to, Zalo OA, Telegram và các kênh phản ánh; không bỏ lỡ từ lần thông báo đầu tiên</field>
+  </record>
+  <record id="tmpl_msg_2" model="ticket.checklist.template">
+    <field name="issue_type">msg_channels</field>
+    <field name="sequence">20</field>
+    <field name="name">Tiếp nhận và ghi nhận — khi có phản ánh mới: ghi ngay kênh tiếp nhận, nội dung, thời điểm, nhân viên/ca trực, mức ưu tiên, trạng thái hiện tại</field>
+  </record>
+  <record id="tmpl_msg_3" model="ticket.checklist.template">
+    <field name="issue_type">msg_channels</field>
+    <field name="sequence">30</field>
+    <field name="name">Phản hồi đầu tiên trong 3 phút — cho khách biết Octa đã tiếp nhận thông tin dù chưa có kết quả cuối; quá 3 phút là vi phạm</field>
+  </record>
+  <record id="tmpl_msg_4" model="ticket.checklist.template">
+    <field name="issue_type">msg_channels</field>
+    <field name="sequence">40</field>
+    <field name="name">Phân loại phản ánh — đơn giản: xử lý trực tiếp; sự vụ (thẻ lỗi/topup/nạp tiền...): mở ticket đúng mã việc tương ứng CS01–CS09</field>
+  </record>
+  <record id="tmpl_msg_5" model="ticket.checklist.template">
+    <field name="issue_type">msg_channels</field>
+    <field name="sequence">50</field>
+    <field name="name">Theo dõi đến khi hoàn tất — nếu chưa xong cuối ca: cập nhật trạng thái, nêu rõ việc đã làm, bàn giao đủ cho ca sau có bản ghi trạng thái rõ ràng</field>
+  </record>
+  <record id="tmpl_msg_6" model="ticket.checklist.template">
+    <field name="issue_type">msg_channels</field>
+    <field name="sequence">60</field>
+    <field name="name">Đánh giá sau ca — thống kê thời gian phản hồi đầu tiên, số phản ánh bị trôi, số việc quá thời gian, các phản ánh chưa xử lý từ ca trước</field>
+  </record>
+
+</odoo>

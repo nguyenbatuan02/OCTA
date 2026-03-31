@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <menuitem id="menu_octa_root"
+            name="OCTA Tickets"
+            sequence="50"/>
+
+  <menuitem id="menu_octa_ticket_all"
+            name="Tất cả Tickets"
+            parent="menu_octa_root"
+            action="action_octa_ticket_all"
+            sequence="10"/>
+
+  <menuitem id="menu_octa_ticket_incident"
+            name="Sự vụ"
+            parent="menu_octa_root"
+            action="action_octa_ticket_incident"
+            sequence="20"/>
+
+  <menuitem id="menu_octa_ticket_periodic"
+            name="Checklist Định kỳ"
+            parent="menu_octa_root"
+            action="action_octa_ticket_periodic"
+            sequence="30"/>
+
+  <menuitem id="menu_octa_ticket_overdue"
+            name="Quá SLA"
+            parent="menu_octa_root"
+            action="action_octa_ticket_overdue"
+            sequence="40"/>
+
+  <menuitem id="menu_octa_ticket_import"
+            name="Import từ Excel"
+            parent="menu_octa_root"
+            action="action_ticket_import_wizard"
+            sequence="50"/>
+</odoo>

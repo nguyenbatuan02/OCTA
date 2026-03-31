@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ticket_checklist_user,ticket.checklist user,model_ticket_checklist,base.group_user,1,1,1,1
+access_ticket_checklist_template_user,ticket.checklist.template user,model_ticket_checklist_template,base.group_user,1,0,0,0
+access_ticket_checklist_template_manager,ticket.checklist.template manager,model_ticket_checklist_template,project.group_project_manager,1,1,1,1
+access_ticket_check_log_user,ticket.check.log user,model_ticket_check_log,base.group_user,1,1,1,0
+access_ticket_check_log_manager,ticket.check.log manager,model_ticket_check_log,project.group_project_manager,1,1,1,1
+access_ticket_import_wizard_user,ticket.import.wizard user,model_ticket_import_wizard,base.group_user,1,1,1,1
+access_ticket_check_log_wizard_user,ticket.check.log.wizard user,model_ticket_check_log_wizard,base.group_user,1,1,1,1
