@@ -66,8 +66,6 @@
               <field name="done" widget="boolean_toggle"/>
               <field name="name"/>
               <field name="attachment_ids" widget="many2many_binary"/>
-              <field name="manager_comment"/>
-              <field name="manager_score"/>
             </tree>
           </field>
         
@@ -91,28 +89,70 @@
 
         <page string="Lịch sử kiểm tra" name="check_log"
             invisible="ticket_type not in ['periodic','shift','continuous']">
-
-          <field name="check_log_ids">
-            <tree decoration-success="result == 'normal'"
-                  decoration-warning="result == 'warning'"
-                  decoration-danger="result in ['incident','escalate']"
-                  create="false" delete="false">
-
-              <field name="check_time"/>
-              <field name="checked_by"/>
-              <field name="result"/>
-              <field name="note"/>
-              <field name="attachment_ids" widget="many2many_binary"/>
-
-            </tree>
-          </field>
-
+            <field name="check_log_ids">
+                <tree decoration-success="result == 'normal'"
+                    decoration-warning="result == 'warning'"
+                    decoration-danger="result in ['incident','escalate']"
+                    create="false" delete="false">
+                    <field name="check_time" readonly="1"/>
+                    <field name="checked_by" readonly="1"/>
+                    <field name="result" readonly="1"/>
+                    <field name="note" readonly="1"/>
+                    <field name="attachment_ids" widget="many2many_binary" readonly="1"/>
+                </tree>
+            </field>
         </page>
 
       </xpath>
 
     </field>
   </record>
+
+<record id="view_ticket_check_log_form" model="ir.ui.view">
+    <field name="name">ticket.check.log.form</field>
+    <field name="model">ticket.check.log</field>
+    <field name="arch" type="xml">
+        <form string="Chi tiết lần kiểm tra">
+            <sheet>
+                <group>
+                    <group string="Thông tin">
+                        <field name="check_time" readonly="1"/>
+                        <field name="checked_by" readonly="1"/>
+                        <field name="result" readonly="1"/>
+                        <field name="avg_score" readonly="1"/>
+                    </group>
+                    <group string="Ghi chú">
+                        <field name="note" readonly="1" nolabel="1"/>
+                    </group>
+                </group>
+
+                <group string="Bằng chứng đính kèm">
+                    <field name="attachment_ids" 
+                           widget="many2many_binary" 
+                           readonly="1"
+                           nolabel="1"/>
+                </group>
+
+                <notebook>
+                    <page string="Chi tiết checklist">
+                        <field name="checklist_snapshot_ids">
+                            <tree editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="done" widget="boolean_toggle" readonly="1"/>
+                                <field name="name" readonly="1"/>
+                                <field name="attachment_ids" 
+                                       widget="many2many_binary" 
+                                       readonly="1"/>
+                                <field name="manager_comment"/>
+                                <field name="manager_score"/>
+                            </tree>
+                        </field>
+                    </page>
+                </notebook>
+            </sheet>
+        </form>
+    </field>
+</record>
 
 
   <record id="view_octa_ticket_list" model="ir.ui.view">
@@ -296,7 +336,7 @@
   </record>
 
   <record id="action_octa_ticket_overdue" model="ir.actions.act_window">
-    <field name="name">⚠ Quá SLA</field>
+    <field name="name">Quá SLA</field>
     <field name="res_model">project.task</field>
     <field name="view_mode">tree,form</field>
     <field name="domain">[

@@ -22,20 +22,25 @@ class TicketCheckLogWizard(models.TransientModel):
     reset_checklist = fields.Boolean('Reset checklist sau khi ghi nhận', default=True)
 
     def action_confirm(self):
-        self.ensure_one()
-        if not self.task_id:
-            raise UserError('Không tìm thấy ticket.')
+        snapshot = [
+            (0, 0, {
+                'sequence':       item.sequence,
+                'name':           item.name,
+                'done':           item.done,
+                'attachment_ids': [(6, 0, item.attachment_ids.ids)],
+            })
+            for item in self.task_id.checklist_ids
+        ]
 
-        # Tạo check log
         self.env['ticket.check.log'].create({
-            'task_id':        self.task_id.id,
-            'result':         self.result,
-            'note':           self.note,
-            'attachment_ids': [(6, 0, self.attachment_ids.ids)],
+            'task_id':                self.task_id.id,
+            'result':                 self.result,
+            'note':                   self.note,
+            'attachment_ids':         [(6, 0, self.attachment_ids.ids)],
+            'checklist_snapshot_ids': snapshot,
         })
 
-        # Reset checklist nếu chọn
-        if self.reset_checklist:
+        if self.reset_checklist and self.task_id.ticket_type != 'continuous':
             self.task_id._reset_checklist()
 
         return {'type': 'ir.actions.act_window_close'}

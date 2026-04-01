@@ -6,3 +6,5 @@ access_ticket_check_log_user,ticket.check.log user,model_ticket_check_log,base.g
 access_ticket_check_log_manager,ticket.check.log manager,model_ticket_check_log,project.group_project_manager,1,1,1,1
 access_ticket_import_wizard_user,ticket.import.wizard user,model_ticket_import_wizard,base.group_user,1,1,1,1
 access_ticket_check_log_wizard_user,ticket.check.log.wizard user,model_ticket_check_log_wizard,base.group_user,1,1,1,1
+access_ticket_check_log_item_user,ticket.check.log.item user,model_ticket_check_log_item,base.group_user,1,1,1,0
+access_ticket_check_log_item_manager,ticket.check.log.item manager,model_ticket_check_log_item,project.group_project_manager,1,1,1,1

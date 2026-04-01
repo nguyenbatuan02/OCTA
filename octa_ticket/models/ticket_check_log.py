@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api
 
 class TicketCheckLog(models.Model):
     _name = 'ticket.check.log'
@@ -22,3 +22,23 @@ class TicketCheckLog(models.Model):
         'log_id', 'attachment_id',
         string='Bằng chứng đính kèm'
     )
+    checklist_snapshot_ids = fields.One2many(
+        'ticket.check.log.item', 'log_id',
+        string='Chi tiết checklist'
+    )
+    # Tổng điểm trung bình tự tính
+    avg_score = fields.Float(
+        'Điểm TB', compute='_compute_avg_score', store=True
+    )
+
+    @api.depends('checklist_snapshot_ids.manager_score')
+    def _compute_avg_score(self):
+        for log in self:
+            scores = log.checklist_snapshot_ids.filtered(
+                lambda i: i.manager_score
+            ).mapped('manager_score')
+            log.avg_score = (
+                sum(int(s) for s in scores) / len(scores)
+                if scores else 0.0
+            )
+
