@@ -122,6 +122,24 @@ class ProjectTask(models.Model):
     check_log_count = fields.Integer(
         'Số lần kiểm tra', compute='_compute_check_log_count', store=True
     )
+    next_check_time = fields.Datetime('Lần check tiếp theo', tracking=True)
+
+    is_check_warning = fields.Boolean('Sắp đến hạn check', compute='_compute_check_status')
+    is_check_overdue = fields.Boolean('Quá hạn check', compute='_compute_check_status')
+
+    def _compute_check_status(self):
+        now = fields.Datetime.now()
+        warn_before = timedelta(minutes=5)
+        for t in self:
+            if not t.next_check_time or t.stage_id.fold:
+                t.is_check_warning = False
+                t.is_check_overdue = False
+                continue
+            t.is_check_overdue = t.next_check_time < now
+            t.is_check_warning = (
+                not t.is_check_overdue
+                and t.next_check_time - warn_before <= now
+            )
 
     def _compute_overdue_sla(self):
         now = fields.Datetime.now()
@@ -218,3 +236,51 @@ class ProjectTask(models.Model):
                 'sequence': t.sequence,
                 'name':     t.name,
             })
+
+    @api.model
+    def _cron_send_check_warning(self):
+        now = fields.Datetime.now()
+        warn_at = now + timedelta(minutes=5)
+
+        # Sắp đến hạn (trong 5 phút tới)
+        warning_tasks = self.search([
+            ('ticket_type', '=', 'periodic'),
+            ('next_check_time', '>=', now),
+            ('next_check_time', '<=', warn_at),
+            ('stage_id.fold', '=', False),
+        ])
+
+        # Quá hạn
+        overdue_tasks = self.search([
+            ('ticket_type', '=', 'periodic'),
+            ('next_check_time', '<', now),
+            ('stage_id.fold', '=', False),
+        ])
+
+        bus = self.env['bus.bus']
+
+        for task in warning_tasks:
+            for user in task.user_ids:
+                bus._sendone(
+                    user.partner_id,
+                    'octa_check_warning',
+                    {
+                        'task_id':    task.id,
+                        'task_name':  task.name,
+                        'check_time': task.next_check_time.strftime('%H:%M'),
+                        'level':      'warning',
+                    }
+                )
+
+        for task in overdue_tasks:
+            for user in task.user_ids:
+                bus._sendone(
+                    user.partner_id,
+                    'octa_check_warning',
+                    {
+                        'task_id':    task.id,
+                        'task_name':  task.name,
+                        'check_time': task.next_check_time.strftime('%H:%M'),
+                        'level':      'overdue',
+                    }
+                )

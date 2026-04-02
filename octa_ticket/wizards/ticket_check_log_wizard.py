@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from odoo import models, fields, api
 from odoo.exceptions import UserError
 
@@ -43,4 +45,21 @@ class TicketCheckLogWizard(models.TransientModel):
         if self.reset_checklist and self.task_id.ticket_type != 'continuous':
             self.task_id._reset_checklist()
 
+        interval = {
+            'gateway_39':        20,
+            'gateway_70':        60,
+            'txn_monitor':       30,
+            'shift_tool_check':  None,  
+            'shift_sales_check': None,
+            'miniapp_check':     None,
+            'msg_channels':      None,
+        }.get(self.task_id.issue_type)
+
+        if interval:
+            self.task_id.next_check_time = (
+                fields.Datetime.now() + timedelta(minutes=interval)
+            )
+
         return {'type': 'ir.actions.act_window_close'}
+    
+        

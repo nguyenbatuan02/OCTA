@@ -10,8 +10,25 @@
       <xpath expr="//page[@name='sub_tasks_page']" position="attributes">
         <attribute name="invisible">1</attribute>
       </xpath>
-
       <xpath expr="//sheet/group" position="after">
+          <field name="is_check_warning" invisible="1"/>
+          <field name="is_check_overdue" invisible="1"/>
+          <div class="alert alert-warning mb-0"
+            invisible="not is_check_warning"
+            role="alert">
+            Sắp đến giờ kiểm tra! Lần check tiếp theo lúc
+            <field name="next_check_time" readonly="1" nolabel="1"/>
+            — Chuẩn bị thực hiện ngay.
+        </div>
+
+        <div class="alert alert-danger mb-0"
+            invisible="not is_check_overdue"
+            role="alert">
+            QUÁ HẠN KIỂM TRA! Lẽ ra phải check lúc
+            <field name="next_check_time" readonly="1" nolabel="1"/>
+            — Thực hiện ngay!
+        </div>
+
         <group>
             <group string="Thông tin sự cố">
                 <field name="issue_type"/>
@@ -22,6 +39,10 @@
                 <field name="sla_deadline"/>
                 <field name="is_overdue_sla" widget="boolean_toggle" readonly="1"/>
                 <field name="date_closed" readonly="1"/>
+                 <field name="next_check_time"
+                      invisible="ticket_type not in ['periodic']"/>
+                 <field name="is_check_overdue" widget="boolean_toggle" readonly="1"
+                      invisible="ticket_type not in ['periodic']"/>
             </group>
         </group>
 
