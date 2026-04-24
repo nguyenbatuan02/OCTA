@@ -165,20 +165,22 @@ class ProjectTask(models.Model):
     def _onchange_issue_type(self):
         if not self.issue_type:
             self.sla_deadline  = False
+            self.next_check_time = False
             self.ticket_type   = False
             self.checklist_ids = [(5, 0, 0)]
             return
 
         # Set ticket_type
         self.ticket_type = TICKET_TYPE_MAP.get(self.issue_type)
-
+        minutes = SLA_MINUTES.get(self.issue_type)
         # Set SLA
         minutes = SLA_MINUTES.get(self.issue_type)
-        self.sla_deadline = (
-            fields.Datetime.now() + timedelta(minutes=minutes)
-            if minutes else False
-        )
-
+        if self.ticket_type == 'incident':
+            self.sla_deadline    = fields.Datetime.now() + timedelta(minutes=minutes)
+            self.next_check_time = False
+        else:
+            self.sla_deadline    = False   # ← None, không có deadline đóng
+            self.next_check_time = fields.Datetime.now() + timedelta(minutes=minutes)
         templates = self.env['ticket.checklist.template'].search(
             [('issue_type', '=', self.issue_type)], order='sequence'
         )
@@ -207,6 +209,12 @@ class ProjectTask(models.Model):
         task = super().create(vals)
         if task.issue_type:
             task.ticket_type = TICKET_TYPE_MAP.get(task.issue_type)
+            minutes = SLA_MINUTES.get(task.issue_type, 0)
+            if task.ticket_type == 'incident':
+                task.sla_deadline = fields.Datetime.now() + timedelta(minutes=minutes)
+            else:
+                task.sla_deadline    = False
+                task.next_check_time = fields.Datetime.now() + timedelta(minutes=minutes)
             task._generate_checklist()
         return task
 
