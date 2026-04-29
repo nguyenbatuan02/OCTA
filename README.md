@@ -8,9 +8,15 @@ Project này dùng Docker để chạy:
 * PostgreSQL
 * Nginx (reverse proxy + SSL)
 
+Bao gồm các module custom:
+
+* `octa_dashboard`
+* `octa_ticket`
+* `octa_project`
+
 ---
 
-##  Quick Start (chạy nhanh)
+##  Quick Start
 
 ```bash
 git clone https://khodichvu.myvnc.com:8443/octa-product/odoo-enhance.git
@@ -18,100 +24,66 @@ cd odoo-enhance
 docker compose up -d
 ```
 
-👉 Sau đó truy cập:
+👉 Truy cập:
 
-```
-http://localhost:8069
-```
+* http://localhost:8069 (local)
+* hoặc domain nếu đã cấu hình
 
 ---
 
-##  1. Cài Docker
+##  Cài module custom
 
-```bash
-curl -fsSL https://get.docker.com -o get-docker.sh
-sh get-docker.sh
+### Bước 1: Bật Developer Mode
 
-sudo usermod -aG docker $USER
-sudo newgrp docker
+* Vào **Settings**
+* Click **Activate Developer Mode**
+
+---
+
+### Bước 2: Update App List
+
+* Vào **Apps**
+* Click **Update Apps List** (hoặc “Cập nhật danh sách ứng dụng”)
+
+---
+
+### Bước 3: Tìm và cài module
+
+* Trong Apps, search:
+
 ```
+octa
+```
+
+👉 Cài lần lượt:
+
+* `octa_dashboard`
+* `octa_ticket`
+* `octa_project`
+
+---
+
+##  Nếu không thấy module
 
 Kiểm tra:
 
+### 1. Addons path
+
+* Đảm bảo folder module nằm trong addons path của Odoo (docker-compose / config)
+
+---
+
+### 2. Restart container
+
 ```bash
-docker ps
+docker compose restart odoo
 ```
 
 ---
 
-##  2. Setup project
+### 3. Update lại app list
 
-```bash
-sudo mkdir /opt/odoo
-sudo chown -R $USER:$USER /opt/odoo
-cd /opt/odoo
-
-git clone https://khodichvu.myvnc.com:8443/octa-product/odoo-enhance.git .
-```
+→ quay lại Apps → Update Apps List
 
 ---
-
-##  3. Start hệ thống
-
-```bash
-docker compose up -d
-```
-
----
-
-##  4. Cấu hình domain (optional)
-
-Trỏ domain về IP server:
-
-```bash
-export DOMAIN=your-domain.com
-```
-
----
-
-##  5. Setup SSL
-
-```bash
-docker run -it --rm --name certbot \
-  -v "/opt/odoo/certbot/conf:/etc/letsencrypt" \
-  -v "/opt/odoo/certbot/logs:/var/log/letsencrypt" \
-  -v "/opt/odoo/certbot/data:/var/www/html" \
-  certbot/certbot certonly --webroot -w /var/www/html \
-  -d $DOMAIN \
-  --email your-email@example.com \
-  --agree-tos --no-eff-email
-```
-
----
-
-##  6. Cấu hình Nginx
-
-```bash
-mv /opt/odoo/nginx/conf.d/default.conf /opt/odoo/nginx/conf.d/default.conf.disabled
-
-sed -i "s|\[DOMAIN\]|$DOMAIN|g" /opt/odoo/nginx/conf.d/default-ssl.conf.disabled
-
-mv /opt/odoo/nginx/conf.d/default-ssl.conf.disabled /opt/odoo/nginx/conf.d/default.conf
-```
-
----
-
-##  Reload Nginx
-
-```bash
-docker compose exec nginx nginx -t
-docker compose exec nginx nginx -s reload
-```
-
----
-
-##  Truy cập
-
-* Không SSL: http://localhost:8069
-* Có domain: https://your-domain.com
 
