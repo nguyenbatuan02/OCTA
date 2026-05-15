@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root menu — chỉ hiện với TPKD trở lên -->
+    <menuitem id="menu_octa_root"
+              name="Octa"
+              sequence="10"
+              groups="octa_base.group_lead"/>
+
+    <!-- ── Cấu hình — chỉ TPKD ──────────────────────────────── -->
+    <menuitem id="menu_octa_config"
+              name="Cấu hình"
+              parent="menu_octa_root"
+              sequence="90"
+              groups="octa_base.group_tpkd"/>
+
+    <menuitem id="menu_octa_approval_config"
+              name="Hạn mức phê duyệt"
+              parent="menu_octa_config"
+              action="action_octa_approval_config"
+              sequence="10"
+              groups="octa_base.group_tpkd"/>
+
+    <!-- ── Audit Log — TDABG trở lên (xem log của nhóm mình) ── -->
+    <menuitem id="menu_octa_audit"
+              name="Audit Log"
+              parent="menu_octa_root"
+              action="action_octa_audit_log"
+              sequence="80"
+              groups="octa_base.group_tdabg"/>
+
+</odoo>

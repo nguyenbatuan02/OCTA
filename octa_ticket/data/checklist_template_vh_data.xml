@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ============================================================
+       VH01 — Lập kế hoạch / đề xuất mua hàng (Ticket sự vụ)
+       8 bước theo tài liệu
+  ============================================================ -->
+  <record id="tmpl_vh01_1" model="ticket.checklist.template">
+    <field name="issue_type">vh01_purchase_plan</field>
+    <field name="sequence">10</field>
+    <field name="name">Thu thập dữ liệu đầu ngày — đăng nhập Gate Kho, Gate Topup, Portal đối tác/API để lấy tồn kho hiện tại, số dư API, hàng đang chạy đầu ngày, lịch sử ngày hôm trước và cùng kỳ tháng trước</field>
+  </record>
+  <record id="tmpl_vh01_2" model="ticket.checklist.template">
+    <field name="issue_type">vh01_purchase_plan</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra tồn đặc thù theo nguồn — Viettel: thẻ cào chưa làm / đã cào chưa chụp / đã nhập kho / đang chờ sản xuất; Vina/NCC khác: tồn thực tế, đơn đang đặt, khả năng rút hàng; API: số dư từng cổng</field>
+  </record>
+  <record id="tmpl_vh01_3" model="ticket.checklist.template">
+    <field name="issue_type">vh01_purchase_plan</field>
+    <field name="sequence">30</field>
+    <field name="name">Dự báo lượng chạy trong ngày — căn cứ lịch sử, tốc độ chạy đầu ngày, biến động doanh số gần nhất, chương trình bán hàng hoặc chỉ đạo kinh doanh để ước lượng nhu cầu ngày/ca</field>
+  </record>
+  <record id="tmpl_vh01_4" model="ticket.checklist.template">
+    <field name="issue_type">vh01_purchase_plan</field>
+    <field name="sequence">40</field>
+    <field name="name">Lập đề xuất mua hàng — xác định số lượng cần nhập từng nguồn (thẻ vật lý, mã thẻ, topup, API); nêu rõ mức tồn sau nhập dự kiến và lý do nếu cần mua bổ sung đột biến</field>
+  </record>
+  <record id="tmpl_vh01_5" model="ticket.checklist.template">
+    <field name="issue_type">vh01_purchase_plan</field>
+    <field name="sequence">50</field>
+    <field name="name">Gửi đề xuất xin xác nhận — chuyển ticket/kế hoạch cho Tài chính chốt phương án vốn và Kế toán/đầu mối NCC triển khai đơn mua; hoàn thành trước 9:00 sáng</field>
+  </record>
+  <record id="tmpl_vh01_6" model="ticket.checklist.template">
+    <field name="issue_type">vh01_purchase_plan</field>
+    <field name="sequence">60</field>
+    <field name="name">Theo dõi nhận hàng/nhận tiền — Viettel: theo dõi bộ phận sản xuất nhận hàng; Vina/NCC: theo dõi nâng tiền vào tài khoản NCC và rút hàng; API: xác nhận NCC đã nâng đúng số tiền</field>
+  </record>
+  <record id="tmpl_vh01_7" model="ticket.checklist.template">
+    <field name="issue_type">vh01_purchase_plan</field>
+    <field name="sequence">70</field>
+    <field name="name">Giám sát sau đặt hàng — trong ngày tiếp tục theo dõi lượng giao dịch thực tế; nếu biến động mạnh so với dự kiến thì mở ticket bổ sung, điều chỉnh hoặc cảnh báo ngay</field>
+  </record>
+  <record id="tmpl_vh01_8" model="ticket.checklist.template">
+    <field name="issue_type">vh01_purchase_plan</field>
+    <field name="sequence">80</field>
+    <field name="name">Chốt ticket cuối ngày — cập nhật: số lượng đề xuất, số lượng mua thực tế, chênh lệch, nguyên nhân chênh lệch và điểm rút kinh nghiệm cho kỳ sau</field>
+  </record>
+
+  <!-- ============================================================
+       VH02 — Kiểm tra định kỳ cổng (Checklist định kỳ)
+  ============================================================ -->
+  <record id="tmpl_vh02_check_1" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_check</field>
+    <field name="sequence">10</field>
+    <field name="name">Mở màn hình theo dõi cổng — truy cập các cổng đang vận hành trong ca, xác nhận dữ liệu đang cập nhật bình thường</field>
+  </record>
+  <record id="tmpl_vh02_check_2" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_check</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra sức khỏe cổng — theo dõi tốc độ xử lý, tỷ lệ thất bại, tỷ lệ GD treo, số dư API, tồn kho thương mại và cảnh báo từ NCC/đối tác</field>
+  </record>
+  <record id="tmpl_vh02_check_3" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_check</field>
+    <field name="sequence">30</field>
+    <field name="name">So sánh cổng chính với cổng backup — đánh giá mức ưu tiên, tốc độ, độ ổn định và năng lực xử lý còn lại của từng cổng</field>
+  </record>
+  <record id="tmpl_vh02_check_4" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_check</field>
+    <field name="sequence">40</field>
+    <field name="name">Phân loại kết quả kiểm tra — bình thường: ghi nhận; có dấu hiệu bất thường (tỷ lệ thất bại tăng, số dư thấp, treo GD): mở ticket sự vụ VH02 ngay</field>
+  </record>
+  <record id="tmpl_vh02_check_5" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_check</field>
+    <field name="sequence">50</field>
+    <field name="name">Chốt kỳ kiểm tra — ghi trạng thái từng cổng: bình thường / đã điều phối / đang lỗi / đã mở ticket / đang chờ NCC</field>
+  </record>
+
+  <!-- ============================================================
+       VH02 — Sự vụ điều phối / chuyển luồng cổng (Ticket sự vụ)
+  ============================================================ -->
+  <record id="tmpl_vh02_inc_1" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_incident</field>
+    <field name="sequence">10</field>
+    <field name="name">Xác định nguyên nhân cần điều phối — cổng lỗi / hết số dư / hết hàng / tỷ lệ thất bại tăng / chỉ đạo thương mại; ghi rõ cổng bị ảnh hưởng và thời điểm phát sinh</field>
+  </record>
+  <record id="tmpl_vh02_inc_2" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_incident</field>
+    <field name="sequence">20</field>
+    <field name="name">Thực hiện đóng/mở/chuyển cổng — thao tác theo quy tắc đã được phê duyệt; đảm bảo luôn có ít nhất 1 cổng backup hoạt động trong khi xử lý</field>
+  </record>
+  <record id="tmpl_vh02_inc_3" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_incident</field>
+    <field name="sequence">30</field>
+    <field name="name">Thông báo CSKH và các đầu mối liên quan — sau khi điều phối xong, gửi thông tin ngay cho CSKH (CS07/CS08) về trạng thái cổng mới</field>
+  </record>
+  <record id="tmpl_vh02_inc_4" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_incident</field>
+    <field name="sequence">40</field>
+    <field name="name">Theo dõi kết quả sau điều phối — kiểm tra lại tỷ lệ GD, trạng thái thất bại/treo, doanh số sau khi chuyển luồng; xác nhận đạt mục tiêu</field>
+  </record>
+  <record id="tmpl_vh02_inc_5" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_incident</field>
+    <field name="sequence">50</field>
+    <field name="name">Phối hợp Kỹ thuật/NCC nếu cần — nếu có dấu hiệu lỗi hệ thống, lỗi NCC hoặc đứt doanh thu diện rộng: mở luồng phối hợp Kỹ thuật xử lý song song</field>
+  </record>
+  <record id="tmpl_vh02_inc_6" model="ticket.checklist.template">
+    <field name="issue_type">vh02_gate_incident</field>
+    <field name="sequence">60</field>
+    <field name="name">Chốt ticket — ghi rõ: cổng đã điều phối, lý do, thời điểm, kết quả sau điều phối, người đã được thông báo; đóng khi luồng GD ổn định trở lại</field>
+  </record>
+
+  <!-- ============================================================
+       VH03 — Hợp đồng / hồ sơ / chính sách (Ticket sự vụ)
+  ============================================================ -->
+  <record id="tmpl_vh03_1" model="ticket.checklist.template">
+    <field name="issue_type">vh03_contract</field>
+    <field name="sequence">10</field>
+    <field name="name">Tiếp nhận yêu cầu — phân loại: hợp đồng mới / gia hạn / điều chỉnh / chấm dứt / cập nhật chính sách; xác nhận đầu vào đủ và thời hạn hoàn thành</field>
+  </record>
+  <record id="tmpl_vh03_2" model="ticket.checklist.template">
+    <field name="issue_type">vh03_contract</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra tính đầy đủ đầu vào — thông tin KH/đối tác, mẫu biểu, nội dung phê duyệt, thời gian hiệu lực, người có thẩm quyền, phạm vi áp dụng</field>
+  </record>
+  <record id="tmpl_vh03_3" model="ticket.checklist.template">
+    <field name="issue_type">vh03_contract</field>
+    <field name="sequence">30</field>
+    <field name="name">Soạn thảo / cập nhật tài liệu — lập hoặc chỉnh sửa hợp đồng, phụ lục, chính sách theo mẫu chuẩn; ngôn ngữ rõ, không gây hiểu sai, phù hợp phạm vi phê duyệt</field>
+  </record>
+  <record id="tmpl_vh03_4" model="ticket.checklist.template">
+    <field name="issue_type">vh03_contract</field>
+    <field name="sequence">40</field>
+    <field name="name">Phối hợp liên phòng — nếu hồ sơ liên quan CSKH/HCNS/Kế toán/Tài chính/Kỹ thuật thì chuyển đúng đầu mối bổ sung thông tin hoặc xác nhận trước khi ban hành</field>
+  </record>
+  <record id="tmpl_vh03_5" model="ticket.checklist.template">
+    <field name="issue_type">vh03_contract</field>
+    <field name="sequence">50</field>
+    <field name="name">Gửi và triển khai — gửi đến đúng đối tượng; hướng dẫn ký/nhận/xác nhận; nếu là chính sách mới thì thông báo theo danh sách áp dụng</field>
+  </record>
+  <record id="tmpl_vh03_6" model="ticket.checklist.template">
+    <field name="issue_type">vh03_contract</field>
+    <field name="sequence">60</field>
+    <field name="name">Lưu trữ và theo dõi phản hồi — lưu bằng chứng gửi đi, phản hồi nhận lại, thời gian hiệu lực và các ý kiến phát sinh; cập nhật ticket đến khi hoàn tất</field>
+  </record>
+  <record id="tmpl_vh03_7" model="ticket.checklist.template">
+    <field name="issue_type">vh03_contract</field>
+    <field name="sequence">70</field>
+    <field name="name">Chốt ticket — chỉ đóng khi hồ sơ/chính sách đã được cập nhật, lưu trữ và không còn đầu việc đang chờ</field>
+  </record>
+
+  <!-- ============================================================
+       VH04 — Theo dõi định kỳ doanh thu KH lớn (Checklist định kỳ)
+  ============================================================ -->
+  <record id="tmpl_vh04_check_1" model="ticket.checklist.template">
+    <field name="issue_type">vh04_revenue_check</field>
+    <field name="sequence">10</field>
+    <field name="name">Truy cập dữ liệu doanh số — đăng nhập portal hoặc báo cáo nội bộ, kiểm tra doanh số tháng trước, hiện tại và tình trạng phát sinh của từng đại lý/đối tác trọng yếu</field>
+  </record>
+  <record id="tmpl_vh04_check_2" model="ticket.checklist.template">
+    <field name="issue_type">vh04_revenue_check</field>
+    <field name="sequence">20</field>
+    <field name="name">Xác định nhóm cần theo dõi — lọc đối tác có doanh số lớn, có cam kết sản lượng, xu hướng giảm mạnh hoặc dấu hiệu rủi ro cần ưu tiên</field>
+  </record>
+  <record id="tmpl_vh04_check_3" model="ticket.checklist.template">
+    <field name="issue_type">vh04_revenue_check</field>
+    <field name="sequence">30</field>
+    <field name="name">So sánh kế hoạch với thực tế — đối chiếu doanh số thực tế với mục tiêu/cam kết; xác định mức lệch và nguyên nhân sơ bộ</field>
+  </record>
+  <record id="tmpl_vh04_check_4" model="ticket.checklist.template">
+    <field name="issue_type">vh04_revenue_check</field>
+    <field name="sequence">40</field>
+    <field name="name">Ghi nhận kết quả — cập nhật tình trạng doanh số, thông tin đã trao đổi, hành động đã thực hiện; nếu có bất thường mở ticket sự vụ VH04 ngay</field>
+  </record>
+
+  <!-- ============================================================
+       VH04 — Sự vụ cảnh báo / đôn đốc doanh thu (Ticket sự vụ)
+  ============================================================ -->
+  <record id="tmpl_vh04_inc_1" model="ticket.checklist.template">
+    <field name="issue_type">vh04_revenue_incident</field>
+    <field name="sequence">10</field>
+    <field name="name">Xác định đối tác và mức lệch — ghi rõ đại lý/đối tác, doanh số cam kết, thực tế, % hoàn thành, thời gian còn lại trong kỳ</field>
+  </record>
+  <record id="tmpl_vh04_inc_2" model="ticket.checklist.template">
+    <field name="issue_type">vh04_revenue_incident</field>
+    <field name="sequence">20</field>
+    <field name="name">Liên hệ đôn đốc — trao đổi với đầu mối đại lý/đối tác về doanh số dự kiến, nhu cầu hàng, khó khăn phát sinh và hành động hỗ trợ cụ thể</field>
+  </record>
+  <record id="tmpl_vh04_inc_3" model="ticket.checklist.template">
+    <field name="issue_type">vh04_revenue_incident</field>
+    <field name="sequence">30</field>
+    <field name="name">Hỗ trợ phối hợp nguồn hàng / cổng / chính sách — nếu đối tác lệch kế hoạch do vấn đề vận hành, phối hợp đầu mối liên quan xử lý ngay</field>
+  </record>
+  <record id="tmpl_vh04_inc_4" model="ticket.checklist.template">
+    <field name="issue_type">vh04_revenue_incident</field>
+    <field name="sequence">40</field>
+    <field name="name">Cảnh báo quản lý — nếu nguy cơ không đạt cam kết, phát sinh bất thường hoặc cần quyết định vượt thẩm quyền: báo quản lý và đầu mối liên quan ngay</field>
+  </record>
+  <record id="tmpl_vh04_inc_5" model="ticket.checklist.template">
+    <field name="issue_type">vh04_revenue_incident</field>
+    <field name="sequence">50</field>
+    <field name="name">Chốt ticket — ghi kết quả đôn đốc, trạng thái doanh số sau xử lý, hành động tiếp theo và dự báo cuối kỳ</field>
+  </record>
+
+  <!-- ============================================================
+       VH05 — Theo dõi định kỳ sản xuất thẻ cào (Checklist định kỳ)
+  ============================================================ -->
+  <record id="tmpl_vh05_check_1" model="ticket.checklist.template">
+    <field name="issue_type">vh05_production_check</field>
+    <field name="sequence">10</field>
+    <field name="name">Xác nhận kế hoạch và phân công ca — phân công rõ người nhận thẻ, người scan, người kiểm tra, người nhập kho và người tổng hợp báo cáo theo kế hoạch từ VH01</field>
+  </record>
+  <record id="tmpl_vh05_check_2" model="ticket.checklist.template">
+    <field name="issue_type">vh05_production_check</field>
+    <field name="sequence">20</field>
+    <field name="name">Theo dõi tiến độ scan và đọc mã — giám sát số lượng đã xử lý, số lỗi, số chưa đọc tự động và thời gian hoàn thành dự kiến</field>
+  </record>
+  <record id="tmpl_vh05_check_3" model="ticket.checklist.template">
+    <field name="issue_type">vh05_production_check</field>
+    <field name="sequence">30</field>
+    <field name="name">Kiểm tra thẻ chưa đọc tự động — tách riêng danh sách thẻ lỗi; tổ chức kiểm tra thủ công; xác minh mã đúng trước khi cho nhập kho</field>
+  </record>
+  <record id="tmpl_vh05_check_4" model="ticket.checklist.template">
+    <field name="issue_type">vh05_production_check</field>
+    <field name="sequence">40</field>
+    <field name="name">Khai báo nhập kho — xác nhận thao tác nhập kho vào hệ thống; đối chiếu số lượng đã sản xuất với dự kiến và số lượng đã lên kho</field>
+  </record>
+  <record id="tmpl_vh05_check_5" model="ticket.checklist.template">
+    <field name="issue_type">vh05_production_check</field>
+    <field name="sequence">50</field>
+    <field name="name">Báo cáo ca — tổng hợp sản lượng, tồn đọng, tỷ lệ thành công, số thẻ lỗi, nguyên nhân; nếu có rủi ro mở ticket sự vụ VH05 ngay</field>
+  </record>
+
+  <!-- ============================================================
+       VH05 — Sự vụ phát sinh sản xuất / lỗi lô (Ticket sự vụ)
+  ============================================================ -->
+  <record id="tmpl_vh05_inc_1" model="ticket.checklist.template">
+    <field name="issue_type">vh05_production_incident</field>
+    <field name="sequence">10</field>
+    <field name="name">Xác định phạm vi sự cố — sản xuất chậm / lỗi hàng loạt / phần mềm đọc mã lỗi / thiếu nhân lực / nguy cơ đứt nguồn hàng; ghi rõ lô hàng và mức độ ảnh hưởng</field>
+  </record>
+  <record id="tmpl_vh05_inc_2" model="ticket.checklist.template">
+    <field name="issue_type">vh05_production_incident</field>
+    <field name="sequence">20</field>
+    <field name="name">Tách biệt thẻ lỗi — cô lập riêng, ghi số lượng và phân loại nguyên nhân; không nhập kho các mã chưa được xác minh</field>
+  </record>
+  <record id="tmpl_vh05_inc_3" model="ticket.checklist.template">
+    <field name="issue_type">vh05_production_incident</field>
+    <field name="sequence">30</field>
+    <field name="name">Báo NCC nếu lỗi hàng loạt — nếu tỷ lệ thẻ lỗi bất thường từ NCC: thông báo ngay CSKH (CS01) để xử lý khiếu nại đồng bộ</field>
+  </record>
+  <record id="tmpl_vh05_inc_4" model="ticket.checklist.template">
+    <field name="issue_type">vh05_production_incident</field>
+    <field name="sequence">40</field>
+    <field name="name">Phối hợp Kỹ thuật nếu phần mềm lỗi — báo Kỹ thuật ngay khi phần mềm đọc mã gặp sự cố; không để đội sản xuất chờ mà không có hướng xử lý</field>
+  </record>
+  <record id="tmpl_vh05_inc_5" model="ticket.checklist.template">
+    <field name="issue_type">vh05_production_incident</field>
+    <field name="sequence">50</field>
+    <field name="name">Chốt ticket — ghi rõ chênh lệch số lượng nhận – sản xuất – nhập kho, nguyên nhân, giải pháp đã thực hiện và điểm rút kinh nghiệm</field>
+  </record>
+
+  <!-- ============================================================
+       VH06 — Dịch vụ ứng tiền Viettel (Ticket sự vụ)
+  ============================================================ -->
+  <record id="tmpl_vh06_1" model="ticket.checklist.template">
+    <field name="issue_type">vh06_advance</field>
+    <field name="sequence">10</field>
+    <field name="name">Chủ động làm việc với đầu mối Viettel — liên hệ chốt lịch làm việc, lịch báo cáo và các nội dung phối hợp trong kỳ mới</field>
+  </record>
+  <record id="tmpl_vh06_2" model="ticket.checklist.template">
+    <field name="issue_type">vh06_advance</field>
+    <field name="sequence">20</field>
+    <field name="name">Truy cập hệ thống CMS — đăng nhập đúng tài khoản, trích xuất dữ liệu báo cáo theo kỳ, kiểm tra định dạng và số liệu tổng thể</field>
+  </record>
+  <record id="tmpl_vh06_3" model="ticket.checklist.template">
+    <field name="issue_type">vh06_advance</field>
+    <field name="sequence">30</field>
+    <field name="name">Gửi dữ liệu cho đầu mối Kỹ thuật/vận hành — chuyển file đúng form, đúng thời hạn; xác nhận đã nhận dữ liệu từ phía nhận</field>
+  </record>
+  <record id="tmpl_vh06_4" model="ticket.checklist.template">
+    <field name="issue_type">vh06_advance</field>
+    <field name="sequence">40</field>
+    <field name="name">Theo dõi và xử lý thay đổi — nếu có thay đổi chính sách/kịch bản từ Viettel hoặc nội bộ: cập nhật nội dung và chuyển đến đầu mối triển khai đúng thời điểm</field>
+  </record>
+  <record id="tmpl_vh06_5" model="ticket.checklist.template">
+    <field name="issue_type">vh06_advance</field>
+    <field name="sequence">50</field>
+    <field name="name">Ghi nhận phản ánh/phát sinh — lỗi hoặc khiếu nại liên quan ứng tiền: mô tả rõ tình trạng, phạm vi ảnh hưởng, dữ liệu đã trích xuất và đầu mối xử lý</field>
+  </record>
+  <record id="tmpl_vh06_6" model="ticket.checklist.template">
+    <field name="issue_type">vh06_advance</field>
+    <field name="sequence">60</field>
+    <field name="name">Chốt ticket — không đóng khi chỉ mới gửi báo cáo; phải theo dõi đến khi Kỹ thuật/đầu mối xác nhận dữ liệu đã dùng được hoặc phát sinh đã xử lý xong</field>
+  </record>
+
+  <!-- ============================================================
+       VH07 — Vận hành vé máy bay (Ticket sự vụ)
+  ============================================================ -->
+  <record id="tmpl_vh07_1" model="ticket.checklist.template">
+    <field name="issue_type">vh07_flight</field>
+    <field name="sequence">10</field>
+    <field name="name">Tiếp nhận yêu cầu — nhận thông tin từ CSKH/đại lý/hệ thống về yêu cầu xuất/đổi/hoàn/hủy vé hoặc khiếu nại GD vé máy bay; xác định loại yêu cầu và mã đơn</field>
+  </record>
+  <record id="tmpl_vh07_2" model="ticket.checklist.template">
+    <field name="issue_type">vh07_flight</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra thông tin GD và phạm vi xử lý — xác nhận đây là phát sinh thuộc Octa/BigM, trạng thái hiện tại và hãng bay/NCC liên quan</field>
+  </record>
+  <record id="tmpl_vh07_3" model="ticket.checklist.template">
+    <field name="issue_type">vh07_flight</field>
+    <field name="sequence">30</field>
+    <field name="name">Kiểm tra số dư quỹ xuất vé — nếu quỹ ≤20 triệu VNĐ: lập đề xuất nạp thêm và theo dõi đến khi số dư được bổ sung an toàn trước khi xử lý vé</field>
+  </record>
+  <record id="tmpl_vh07_4" model="ticket.checklist.template">
+    <field name="issue_type">vh07_flight</field>
+    <field name="sequence">40</field>
+    <field name="name">Thực hiện nghiệp vụ — xuất/đổi/hoàn/hủy vé theo quy định; nếu phát sinh lỗi ngoài chuẩn: chuyển Kỹ thuật hoặc NCC đúng đầu mối</field>
+  </record>
+  <record id="tmpl_vh07_5" model="ticket.checklist.template">
+    <field name="issue_type">vh07_flight</field>
+    <field name="sequence">50</field>
+    <field name="name">Kiểm tra phản hồi từ NCC — nếu NCC gửi email hoặc cập nhật thay đổi chuyến bay: chuyển/gửi lại thông tin cho khách hàng hoặc CSKH ngay</field>
+  </record>
+  <record id="tmpl_vh07_6" model="ticket.checklist.template">
+    <field name="issue_type">vh07_flight</field>
+    <field name="sequence">60</field>
+    <field name="name">Cập nhật ticket và thông tin cho CSKH — ghi rõ việc đã làm, kết quả hiện tại, bước còn chờ, tài liệu/bằng chứng liên quan</field>
+  </record>
+  <record id="tmpl_vh07_7" model="ticket.checklist.template">
+    <field name="issue_type">vh07_flight</field>
+    <field name="sequence">70</field>
+    <field name="name">Chốt ticket — chỉ đóng khi GD về trạng thái cuối hoặc đã bàn giao đầy đủ cho đầu mối xử lý tiếp với bằng chứng rõ ràng</field>
+  </record>
+
+  <!-- ============================================================
+       VH08 — Dashboard / báo cáo ngày (Checklist định kỳ)
+  ============================================================ -->
+  <record id="tmpl_vh08_daily_1" model="ticket.checklist.template">
+    <field name="issue_type">vh08_report_daily</field>
+    <field name="sequence">10</field>
+    <field name="name">Trích xuất dữ liệu nguồn — lấy dữ liệu từ portal, kho hàng, tài khoản API, cổng GD, sản xuất, doanh số, vé máy bay, ứng tiền và các nguồn liên quan</field>
+  </record>
+  <record id="tmpl_vh08_daily_2" model="ticket.checklist.template">
+    <field name="issue_type">vh08_report_daily</field>
+    <field name="sequence">20</field>
+    <field name="name">Kiểm tra và chuẩn hóa số liệu — so khớp số tổng, kiểm tra thiếu/trùng, xác nhận chỉ tiêu trọng yếu trước khi tổng hợp</field>
+  </record>
+  <record id="tmpl_vh08_daily_3" model="ticket.checklist.template">
+    <field name="issue_type">vh08_report_daily</field>
+    <field name="sequence">30</field>
+    <field name="name">Tổng hợp dashboard ngày — cập nhật chỉ số vận hành chính (nguồn hàng, cổng, sự cố, doanh số, cảnh báo); hoàn tất trước 9:00 sáng</field>
+  </record>
+  <record id="tmpl_vh08_daily_4" model="ticket.checklist.template">
+    <field name="issue_type">vh08_report_daily</field>
+    <field name="sequence">40</field>
+    <field name="name">Gửi và lưu vết — gửi đúng nhóm nhận, đúng thời hạn; lưu file báo cáo, thời gian phát hành và bản dữ liệu nguồn để đối chiếu khi cần</field>
+  </record>
+  <record id="tmpl_vh08_daily_5" model="ticket.checklist.template">
+    <field name="issue_type">vh08_report_daily</field>
+    <field name="sequence">50</field>
+    <field name="name">Phân loại kết quả — bình thường: ghi nhận; phát hiện chênh lệch dữ liệu/thiếu số liệu/sự cố ảnh hưởng chất lượng báo cáo: mở ticket sự vụ VH08 ngay</field>
+  </record>
+
+  <!-- ============================================================
+       VH08 — Sự vụ số liệu / báo cáo đột xuất (Ticket sự vụ)
+  ============================================================ -->
+  <record id="tmpl_vh08_inc_1" model="ticket.checklist.template">
+    <field name="issue_type">vh08_report_incident</field>
+    <field name="sequence">10</field>
+    <field name="name">Xác định vấn đề báo cáo — chênh lệch dữ liệu / thiếu số liệu / sự cố ảnh hưởng chất lượng / yêu cầu đột xuất từ quản lý; ghi rõ phạm vi và mức độ</field>
+  </record>
+  <record id="tmpl_vh08_inc_2" model="ticket.checklist.template">
+    <field name="issue_type">vh08_report_incident</field>
+    <field name="sequence">20</field>
+    <field name="name">Truy lại nguồn gốc số liệu — xác định dữ liệu nào bị sai/thiếu, từ hệ thống nào, do nguyên nhân gì; không tự ước lượng số liệu trọng yếu</field>
+  </record>
+  <record id="tmpl_vh08_inc_3" model="ticket.checklist.template">
+    <field name="issue_type">vh08_report_incident</field>
+    <field name="sequence">30</field>
+    <field name="name">Thực hiện báo cáo phân tích — với báo cáo tuần/tháng/quý: bổ sung phân tích nguyên nhân, xu hướng, rủi ro, tác động doanh thu và đề xuất hành động</field>
+  </record>
+  <record id="tmpl_vh08_inc_4" model="ticket.checklist.template">
+    <field name="issue_type">vh08_report_incident</field>
+    <field name="sequence">40</field>
+    <field name="name">Chốt ticket — ghi rõ nguyên nhân sự cố số liệu, giải pháp đã xử lý, kết quả và chuẩn hóa lại mẫu nếu cần cho các kỳ sau</field>
+  </record>
+
+</odoo>

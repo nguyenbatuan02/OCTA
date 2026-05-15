@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+    <!-- Phiếu phê duyệt -->
+    <record id="seq_octa_approval" model="ir.sequence">
+        <field name="name">Octa Approval</field>
+        <field name="code">octa.approval</field>
+        <field name="prefix">APR/%(year)s/%(month)s/</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+        <field name="use_date_range">False</field>
+    </record>
+
+    <!-- Lệnh mở/đóng cổng-->
+    <record id="seq_octa_gateway_command" model="ir.sequence">
+        <field name="name">Octa Gateway Command</field>
+        <field name="code">octa.gateway.command</field>
+        <field name="prefix">GW-CMD/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <!-- Cảnh báo ranh đỏ -->
+    <record id="seq_octa_alert" model="ir.sequence">
+        <field name="name">Octa Alert</field>
+        <field name="code">octa.alert</field>
+        <field name="prefix">ALT/%(year)s/</field>
+        <field name="padding">4</field>
+        <field name="number_increment">1</field>
+    </record>
+
+</data>
+</odoo>

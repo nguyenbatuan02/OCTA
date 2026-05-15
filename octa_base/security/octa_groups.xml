@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- ══════════════════════════════════════════════════════════
+         MODULE CATEGORY
+    ══════════════════════════════════════════════════════════ -->
+    <record id="module_category_octa" model="ir.module.category">
+        <field name="name">Octa</field>
+        <field name="description">Phân quyền hệ thống Octa</field>
+        <field name="sequence">100</field>
+        <field name="visible">True</field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TẦNG 1 — NHÂN VIÊN
+         Tầng thực thi, xử lý ticket và checklist hằng ngày.
+         Phân biệt rõ CSKH và Vận hành vì record rules lọc
+         riêng theo dept=cskh / dept=ops.
+    ══════════════════════════════════════════════════════════ -->
+
+    <record id="group_octa_cskh" model="res.groups">
+        <field name="name">Nhân viên CSKH</field>
+        <field name="category_id" ref="module_category_octa"/>
+        <field name="comment">
+            Xử lý ticket CS01–CS10.
+            Chỉ thấy ticket dept=cskh được assign cho mình.
+            Không thấy dữ liệu đại lý, giá vốn, BigM, UTV.
+        </field>
+    </record>
+
+    <record id="group_octa_ops" model="res.groups">
+        <field name="name">Nhân viên Vận hành</field>
+        <field name="category_id" ref="module_category_octa"/>
+        <field name="comment">
+            Thực hiện VH01–VH08.
+            Chỉ thấy ticket dept=ops được assign cho mình.
+            Không thấy dữ liệu tài chính, BigM, UTV.
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TẦNG 2 — LEAD CSKH & VẬN HÀNH THƯƠNG MẠI
+         1 vị trí duy nhất kiêm cả CSKH lẫn VH.
+         Kế thừa cả 2 group nhân viên qua implied_ids →
+         thấy toàn bộ ticket của cả 2 bộ phận.
+         Có thêm quyền duyệt hoàn tiền trong hạn mức Lead.
+    ══════════════════════════════════════════════════════════ -->
+
+    <record id="group_lead" model="res.groups">
+        <field name="name">Lead CSKH &amp; Vận hành</field>
+        <field name="category_id" ref="module_category_octa"/>
+        <field name="comment">
+            Lead CSKH &amp; Vận hành thương mại Bigtel.
+            Thấy toàn bộ ticket CSKH + VH của team.
+            Duyệt hoàn tiền trong hạn mức Lead.
+            Quản lý ca/kíp, SLA, báo cáo ca.
+        </field>
+        <field name="implied_ids" eval="[
+            (4, ref('group_octa_cskh')),
+            (4, ref('group_octa_ops')),
+        ]"/>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TẦNG 3 — TRƯỞNG DỰ ÁN BIGTEL (TDABG)
+         Chịu trách nhiệm cao nhất cấp dự án Bigtel.
+         Kế thừa Lead → thấy toàn bộ dữ liệu Bigtel.
+         KHÔNG truy cập BigM / Ứng tiền Viettel.
+         Duyệt trong hạn mức TDABG, escalate PPKD khi vượt.
+    ══════════════════════════════════════════════════════════ -->
+
+    <record id="group_tdabg" model="res.groups">
+        <field name="name">Trưởng dự án Bigtel</field>
+        <field name="category_id" ref="module_category_octa"/>
+        <field name="comment">
+            Phạm vi: Bigtel toàn chuỗi QT.KD.01 (9 bước).
+            Không truy cập BigM / UTV.
+            Duyệt NCC, giá, hoàn tiền trong hạn mức TDABG.
+            Escalate PPKD khi vượt hạn mức.
+            Stop authority: đóng cổng/kho khẩn cấp, báo PPKD trong 1h,
+            bổ sung phê duyệt trong 2h.
+        </field>
+        <field name="implied_ids" eval="[
+            (4, ref('group_lead')),
+        ]"/>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TẦNG 4 — PHÓ PHÒNG KINH DOANH (PPKD)
+         Phụ trách trực tiếp Bigtel + Mảng Tài chính lớp TM.
+         BigM / UTV: chỉ view-only để tham vấn TPKD.
+         Kế thừa TDABG → full Bigtel + thêm TC lớp TM.
+         Escalate TPKD khi vượt hạn mức PPKD.
+    ══════════════════════════════════════════════════════════ -->
+
+    <record id="group_ppkd" model="res.groups">
+        <field name="name">Phó phòng Kinh doanh</field>
+        <field name="category_id" ref="module_category_octa"/>
+        <field name="comment">
+            Phạm vi: Bigtel (full) + TC lớp TM (full).
+            BigM / UTV: view-only, tham vấn, không phê duyệt.
+            Hạn mức phê duyệt thấp hơn TPKD.
+            Thay TPKD khi có văn bản ủy quyền (tag AUTHORIZED_SUBSTITUTION).
+            Escalate TPKD khi vượt hạn mức PPKD.
+        </field>
+        <field name="implied_ids" eval="[
+            (4, ref('group_tdabg')),
+        ]"/>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════
+         TẦNG 5 — TRƯỞNG PHÒNG KINH DOANH (TPKD)
+         Owner toàn bộ kết quả KD: Bigtel + BigM + UTV.
+         Hạn mức phê duyệt cao nhất trong Phòng KD.
+         Escalate GĐ/HĐQT với ranh đỏ trọng yếu.
+    ══════════════════════════════════════════════════════════ -->
+
+    <record id="group_tpkd" model="res.groups">
+        <field name="name">Trưởng phòng Kinh doanh</field>
+        <field name="category_id" ref="module_category_octa"/>
+        <field name="comment">
+            Phạm vi: Toàn Phòng KD (Bigtel + BigM + UTV).
+            Hạn mức phê duyệt cao nhất trong Phòng KD.
+            Báo cáo Giám đốc / HĐQT.
+            Escalate GĐ khi vượt hạn mức TPKD.
+            Ranh đỏ trọng yếu: escalate HĐQT.
+        </field>
+        <field name="implied_ids" eval="[
+            (4, ref('group_ppkd')),
+        ]"/>
+    </record>
+
+</data>
+</odoo>

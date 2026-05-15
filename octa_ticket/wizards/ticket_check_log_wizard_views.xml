@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_ticket_check_log_wizard_form" model="ir.ui.view">
+    <field name="name">ticket.check.log.wizard.form</field>
+    <field name="model">ticket.check.log.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Ghi nhận lần kiểm tra">
+        <sheet>
+
+          <!-- ── Kết quả ── -->
+          <group string="Kết quả kiểm tra">
+            <group>
+              <field name="result" widget="radio"/>
+              <field name="reset_checklist" widget="boolean_toggle"/>
+            </group>
+            <group>
+              <field name="note" placeholder="Mô tả chi tiết..."/>
+            </group>
+          </group>
+
+          <group string="Bằng chứng đính kèm">
+            <field name="attachment_ids" widget="many2many_binary" nolabel="1"/>
+          </group>
+
+          <!-- ── Cảnh báo → tạo ticket VH ── -->
+          <group string="Ticket Vận hành cần xử lý"
+                 invisible="result != 'warning'">
+            <field name="linked_issue_type" string="Loại đầu việc VH"
+                   required="result == 'warning'"/>
+            <field name="linked_ticket_name" string="Tiêu đề ticket"
+                   placeholder="Để trống sẽ tự sinh..."/>
+            <div class="alert alert-warning" role="alert" colspan="2">
+              Hệ thống sẽ tạo ticket Vận hành và link với ticket này.
+              Ticket này sẽ không đóng được cho đến khi VH hoàn thành.
+            </div>
+          </group>
+
+          <!-- ── Mở sự vụ CSKH ── -->
+          <group string="Sự vụ CSKH cần mở"
+                 invisible="result != 'incident' or context.get('dept') != 'cskh'">
+            <field name="incident_issue_type_cskh" string="Loại sự vụ"
+                   required="result == 'incident' and context.get('dept') == 'cskh'"/>
+            <field name="incident_ticket_name" string="Tiêu đề"
+                   placeholder="Để trống sẽ tự sinh..."/>
+            <div class="alert alert-danger" role="alert" colspan="2">
+              Hệ thống sẽ tạo ticket sự vụ mới cho bộ phận CSKH.
+            </div>
+          </group>
+
+          <!-- ── Mở sự vụ Vận hành ── -->
+          <group string="Sự vụ Vận hành cần mở"
+                 invisible="result != 'incident' or context.get('dept') != 'ops'">
+            <field name="incident_issue_type_ops" string="Loại sự vụ"
+                   required="result == 'incident' and context.get('dept') == 'ops'"/>
+            <field name="incident_ticket_name" string="Tiêu đề"
+                   placeholder="Để trống sẽ tự sinh..."/>
+            <div class="alert alert-danger" role="alert" colspan="2">
+              Hệ thống sẽ tạo ticket sự vụ mới cho bộ phận Vận hành.
+            </div>
+          </group>
+
+        </sheet>
+        <footer>
+          <button string="Xác nhận" type="object" name="action_confirm"
+                  class="btn-primary"/>
+          <button string="Huỷ" class="btn-secondary" special="cancel"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+</odoo>
