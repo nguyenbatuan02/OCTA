@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Root menu — chỉ hiện với TPKD trở lên -->
+    <!-- Root menu — hiện với Lead trở lên -->
     <menuitem id="menu_octa_root"
               name="Octa"
               sequence="10"
@@ -21,7 +21,7 @@
               sequence="10"
               groups="octa_base.group_tpkd"/>
 
-    <!-- ── Audit Log — TDABG trở lên (xem log của nhóm mình) ── -->
+    <!-- ── Audit Log — TDABG trở lên ────────────────────────── -->
     <menuitem id="menu_octa_audit"
               name="Audit Log"
               parent="menu_octa_root"

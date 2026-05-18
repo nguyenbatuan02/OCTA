@@ -1,132 +1,207 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <!-- Form view -->
+    <!-- ============================================================
+         FORM VIEW
+         - Banner cảnh báo khi chưa có bản ghi nào active
+         - Nút Kích hoạt / Huỷ kích hoạt rõ ràng
+         - Statusbar hiện trạng thái đang áp dụng
+         - Tất cả field nhóm theo tab cho dễ đọc
+    ============================================================ -->
     <record id="view_octa_approval_config_form" model="ir.ui.view">
         <field name="name">octa.approval.config.form</field>
         <field name="model">octa.approval.config</field>
         <field name="arch" type="xml">
             <form string="Hạn mức phê duyệt">
 
-                <!-- Banner cảnh báo khi chưa active -->
-                <div class="alert alert-warning" role="alert"
-                     attrs="{'invisible': [('active', '=', True)]}">
-                    <strong>Bản ghi này không đang áp dụng.</strong>
-                    Tick "Đang áp dụng" và lưu để kích hoạt.
-                </div>
+                <!-- Header: nút hành động + statusbar -->
+                <header>
+                    <button name="action_activate"
+                            string="Kích hoạt"
+                            type="object"
+                            class="btn-primary"
+                            invisible="active"
+                            confirm="Kích hoạt bản ghi này sẽ tự động huỷ kích hoạt bản ghi đang áp dụng hiện tại. Bạn có chắc không?"/>
+                    <button name="action_deactivate"
+                            string="Huỷ kích hoạt"
+                            type="object"
+                            class="btn-secondary"
+                            invisible="not active"/>
+                    <field name="active"
+                           invisible="1"/>
+                </header>
 
                 <sheet>
+
+                    <!-- Banner: chưa kích hoạt -->
+                    <div class="alert alert-warning mb-3"
+                         role="alert"
+                         invisible="active">
+                        <strong>Chưa kích hoạt.</strong>
+                        Bản ghi này chưa được áp dụng. Điền đầy đủ các trường bên dưới rồi bấm
+                        <strong>Kích hoạt</strong> để hệ thống bắt đầu dùng hạn mức này.
+                    </div>
+
+                    <!-- Banner: đang áp dụng -->
+                    <div class="alert alert-success mb-3"
+                         role="alert"
+                         invisible="not active">
+                        <strong>✓ Đang áp dụng.</strong>
+                        Đây là cấu hình hạn mức phê duyệt hiện hành của hệ thống Octa.
+                        Mọi thay đổi có hiệu lực ngay lập tức.
+                    </div>
+
+                    <!-- Tiêu đề + ngày hiệu lực -->
                     <div class="oe_title">
+                        <label for="name" string="Tên phiên bản"/>
                         <h1>
-                            <field name="name" placeholder="Tên phiên bản..."/>
+                            <field name="name"
+                                   placeholder="VD: Hạn mức phê duyệt 2026 — v1.0"
+                                   style="width: 100%"/>
                         </h1>
                     </div>
 
                     <group>
-                        <group string="Thông tin chung">
-                            <field name="active" widget="boolean_toggle"/>
-                            <field name="effective_date"/>
-                            <field name="approved_by"/>
+                        <group>
+                            <field name="effective_date" string="Ngày hiệu lực"/>
+                            <field name="approved_by"    string="Phê duyệt bởi"/>
                         </group>
-                        <group string="Ghi chú">
-                            <field name="note" nolabel="1"
-                                   placeholder="Căn cứ phê duyệt, quyết định số..."/>
+                        <group>
+                            <field name="note"
+                                   string="Ghi chú / Căn cứ"
+                                   placeholder="VD: Theo Quy chế Phân quyền Octa 2026, phiên bản 1.0 ngày..."/>
                         </group>
                     </group>
 
                     <notebook>
 
-                        <!-- Tab 1: Hạn mức hoàn tiền -->
-                        <page string="Hạn mức hoàn tiền / nạp bù" name="refund_limit">
+                        <!-- TAB 1: Hạn mức hoàn tiền -->
+                        <page string="Hạn mức hoàn tiền / Nạp bù" name="tab_refund">
                             <div class="alert alert-info" role="alert">
-                                <i class="fa fa-info-circle"/> Hệ thống tự block nút
-                                <strong>Phê duyệt</strong> và hiện nút
-                                <strong>Escalate</strong> khi số tiền vượt hạn mức.
-                                Hạn mức phải tăng dần: Lead ≤ TDABG ≤ PPKD ≤ TPKD.
+                                Số tiền yêu cầu hoàn tiền / nạp bù
+                                <strong>≤ hạn mức</strong> của tầng nào thì tầng đó tự duyệt.
+                                Vượt hạn mức → hệ thống tự <strong>escalate lên tầng trên</strong>,
+                                không cần thao tác thủ công.
                             </div>
                             <group>
-                                <group string="Hạn mức theo vai (VNĐ)">
+                                <group string="Hạn mức theo tầng (VNĐ)">
                                     <field name="limit_lead"
+                                           string="Lead CSKH &amp; Vận hành"
                                            widget="monetary"
-                                           options="{'currency_field': false}"/>
+                                           options="{'currency_field': false}"
+                                           placeholder="VD: 500,000"/>
                                     <field name="limit_tdabg"
+                                           string="Trưởng dự án Bigtel (TDABG)"
                                            widget="monetary"
-                                           options="{'currency_field': false}"/>
+                                           options="{'currency_field': false}"
+                                           placeholder="VD: 2,000,000"/>
                                     <field name="limit_ppkd"
+                                           string="Phó phòng Kinh doanh (PPKD)"
                                            widget="monetary"
-                                           options="{'currency_field': false}"/>
+                                           options="{'currency_field': false}"
+                                           placeholder="VD: 10,000,000"/>
                                     <field name="limit_tpkd"
+                                           string="Trưởng phòng Kinh doanh (TPKD)"
                                            widget="monetary"
-                                           options="{'currency_field': false}"/>
+                                           options="{'currency_field': false}"
+                                           placeholder="VD: 50,000,000"/>
                                 </group>
-                            </group>
-                        </page>
-
-                        <!-- Tab 2: Hạn mức công nợ & NCC -->
-                        <page string="Công nợ &amp; NCC" name="debt_ncc">
-                            <group>
-                                <group string="Hạn mức cấp công nợ đại lý (VNĐ)">
+                                <group string="Hạn mức công nợ đại lý (VNĐ)">
                                     <field name="debt_limit_tdabg"
+                                           string="TDABG duyệt"
                                            widget="monetary"
                                            options="{'currency_field': false}"/>
                                     <field name="debt_limit_ppkd"
+                                           string="PPKD duyệt"
                                            widget="monetary"
                                            options="{'currency_field': false}"/>
                                     <field name="debt_limit_tpkd"
+                                           string="TPKD duyệt"
                                            widget="monetary"
                                            options="{'currency_field': false}"/>
                                 </group>
-                                <group string="Hạn mức đề xuất NCC mới (giá trị HĐ VNĐ)">
+                            </group>
+                            <group>
+                                <group string="Hạn mức đề xuất NCC mới (giá trị HĐ — VNĐ)">
                                     <field name="ncc_limit_tdabg"
+                                           string="TDABG duyệt"
                                            widget="monetary"
-                                           options="{'currency_field': false}"/>
+                                           options="{'currency_field': false}"
+                                           help="Đặt 0 = TDABG không được tự duyệt NCC mới"/>
                                     <field name="ncc_limit_ppkd"
+                                           string="PPKD duyệt"
                                            widget="monetary"
                                            options="{'currency_field': false}"/>
                                 </group>
                             </group>
                         </page>
 
-                        <!-- Tab 3: Ngưỡng ranh đỏ vận hành -->
-                        <page string="Ranh đỏ vận hành" name="operational_threshold">
+                        <!-- TAB 2: Ranh đỏ vận hành -->
+                        <page string="Ngưỡng ranh đỏ vận hành" name="tab_red_line">
                             <div class="alert alert-danger" role="alert">
-                                <i class="fa fa-exclamation-triangle"/>
-                                Các ngưỡng này kích hoạt hành động
-                                <strong>tự động</strong> của hệ thống.
-                                Thay đổi cẩn thận — có hiệu lực ngay sau khi lưu.
+                                Khi đạt ngưỡng ranh đỏ, hệ thống <strong>tự động khóa</strong>
+                                (đóng cổng / khóa kho) và gửi alert ngay lập tức.
+                                Không cần thao tác thủ công của bất kỳ ai.
                             </div>
                             <group>
-                                <group string="Tự động đóng / khoá">
-                                    <field name="gateway_error_threshold"/>
-                                    <field name="complaint_burst_count"/>
-                                    <field name="complaint_burst_minutes"/>
+                                <group string="Cổng API">
+                                    <field name="gateway_error_threshold"
+                                           string="Lỗi liên tiếp → tự đóng cổng (lần)"
+                                           help="≥ X lỗi liên tiếp trên 1 cổng → hệ thống tự đóng + alert TDABG"/>
                                 </group>
-                                <group string="Thời hạn xử lý lệnh khẩn">
-                                    <field name="emergency_approval_hours"/>
-                                    <field name="emergency_report_hours"/>
+                                <group string="Kho hàng">
+                                    <field name="complaint_burst_count"
+                                           string="Khiếu nại trong cửa sổ thời gian (lần)"
+                                           help="≥ X khiếu nại trong Y phút → tự khóa kho"/>
+                                    <field name="complaint_burst_minutes"
+                                           string="Cửa sổ thời gian (phút)"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group string="Lệnh khẩn cấp">
+                                    <field name="emergency_approval_hours"
+                                           string="Hạn bổ sung phê duyệt sau lệnh khẩn (giờ)"
+                                           help="Sau khi ra lệnh đóng cổng/kho khẩn, TDABG/PPKD/TPKD phải bổ sung phê duyệt trong X giờ"/>
+                                    <field name="emergency_report_hours"
+                                           string="Hạn báo cáo cấp trên sau lệnh khẩn (giờ)"/>
+                                </group>
+                                <group string="Tồn kho &amp; Tài chính">
+                                    <field name="stock_warning_days"
+                                           string="Cảnh báo tồn kho thấp (ngày nhu cầu)"
+                                           help="Tồn kho &lt; X ngày nhu cầu → alert High"/>
+                                    <field name="reconciliation_lag_hours"
+                                           string="Chênh lệch chưa giải trình tối đa (giờ)"/>
+                                    <field name="flight_fund_warning"
+                                           string="Cảnh báo quỹ vé máy bay (VNĐ)"
+                                           widget="monetary"
+                                           options="{'currency_field': false}"
+                                           help="Quỹ xuất vé ≤ X VNĐ → đề xuất nạp thêm (VH07)"/>
                                 </group>
                             </group>
                         </page>
 
-                        <!-- Tab 4: Ngưỡng tập trung & tài chính -->
-                        <page string="Tập trung &amp; Tài chính" name="concentration">
+                        <!-- TAB 3: Ranh đỏ tập trung -->
+                        <page string="Ngưỡng tập trung" name="tab_concentration">
+                            <div class="alert alert-warning" role="alert">
+                                Ngưỡng tập trung để tránh phụ thuộc quá mức vào
+                                1 đại lý / 1 NCC / 1 nguồn tài chính.
+                                Khi vượt ngưỡng → alert tự động leo thang lên TPKD hoặc GĐ.
+                            </div>
                             <group>
-                                <group string="Ngưỡng tập trung (%)">
+                                <group string="Tập trung doanh thu">
                                     <field name="agent_concentration_pct"
-                                           string="Đại lý > X% DT 1 SP"/>
+                                           string="Đại lý &gt; X% DT 1 sản phẩm → ranh đỏ (%)"
+                                           help="1 đại lý chiếm &gt; X% doanh thu 1 SP → alert TPKD + GĐ, dừng mở rộng"/>
                                     <field name="ncc_concentration_pct"
-                                           string="NCC > X% SL/dòng SP"/>
-                                    <field name="finance_warning_pct"
-                                           string="Vay TC — cảnh báo sớm (%)"/>
-                                    <field name="finance_concentration_pct"
-                                           string="Vay TC — ranh đỏ (%)"/>
+                                           string="NCC &gt; X% sản lượng dòng SP → ranh đỏ (%)"/>
                                 </group>
-                                <group string="Tồn kho &amp; Tài chính">
-                                    <field name="stock_warning_days"/>
-                                    <field name="reconciliation_lag_hours"/>
-                                    <field name="flight_fund_warning"
-                                           widget="monetary"
-                                           options="{'currency_field': false}"/>
+                                <group string="Tập trung tài chính">
+                                    <field name="finance_warning_pct"
+                                           string="Cảnh báo sớm vay 1 cty TC (%)"
+                                           help="Cảnh báo vàng — alert TPKD để chuẩn bị trước khi chạm ranh đỏ"/>
+                                    <field name="finance_concentration_pct"
+                                           string="Ranh đỏ vay 1 cty tài chính (%)"
+                                           help="≥ X% tổng vốn vay từ 1 công ty TC → alert HĐQT"/>
                                 </group>
                             </group>
                         </page>
@@ -134,7 +209,7 @@
                     </notebook>
                 </sheet>
 
-                <!-- Chatter — tự ghi audit khi thay đổi -->
+                <!-- Chatter: tự ghi lại mọi thay đổi -->
                 <div class="oe_chatter">
                     <field name="message_follower_ids"/>
                     <field name="message_ids"/>
@@ -144,40 +219,47 @@
         </field>
     </record>
 
-    <!-- List view -->
+    <!-- ============================================================
+         TREE VIEW
+    ============================================================ -->
     <record id="view_octa_approval_config_list" model="ir.ui.view">
-        <field name="name">octa.approval.config.list</field>
+        <field name="name">octa.approval.config.tree</field>
         <field name="model">octa.approval.config</field>
         <field name="arch" type="xml">
-            <list string="Hạn mức phê duyệt" decoration-success="active == True">
-                <field name="name"/>
-                <field name="active" string="Đang áp dụng" widget="boolean"/>
-                <field name="effective_date"/>
-                <field name="limit_lead" string="Lead (VNĐ)"
+            <tree string="Hạn mức phê duyệt"
+                  decoration-success="active == True"
+                  decoration-muted="active == False">
+                <field name="name"         string="Tên phiên bản"/>
+                <field name="active"       string="Đang áp dụng" widget="boolean"/>
+                <field name="effective_date" string="Ngày hiệu lực"/>
+                <field name="limit_lead"   string="Lead (VNĐ)"
                        widget="monetary" options="{'currency_field': false}"/>
-                <field name="limit_tdabg" string="TDABG (VNĐ)"
+                <field name="limit_tdabg"  string="TDABG (VNĐ)"
                        widget="monetary" options="{'currency_field': false}"/>
-                <field name="limit_ppkd" string="PPKD (VNĐ)"
+                <field name="limit_ppkd"   string="PPKD (VNĐ)"
                        widget="monetary" options="{'currency_field': false}"/>
-                <field name="limit_tpkd" string="TPKD (VNĐ)"
+                <field name="limit_tpkd"   string="TPKD (VNĐ)"
                        widget="monetary" options="{'currency_field': false}"/>
-                <field name="approved_by" string="Phê duyệt bởi"/>
-            </list>
+                <field name="approved_by"  string="Phê duyệt bởi"/>
+            </tree>
         </field>
     </record>
 
-    <!-- Action -->
+    <!-- ============================================================
+         ACTION
+    ============================================================ -->
     <record id="action_octa_approval_config" model="ir.actions.act_window">
         <field name="name">Hạn mức phê duyệt</field>
         <field name="res_model">octa.approval.config</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Chưa có cấu hình hạn mức phê duyệt
+                Chưa có cấu hình hạn mức phê duyệt nào
             </p>
             <p>
-                Tạo cấu hình để hệ thống biết ai được duyệt bao nhiêu
-                và khi nào cần leo thang lên tầng trên.
+                Tạo mới → điền đầy đủ các trường →
+                bấm <b>Kích hoạt</b> để hệ thống bắt đầu áp dụng.
             </p>
         </field>
     </record>

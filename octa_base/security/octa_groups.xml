@@ -44,7 +44,6 @@
          1 vị trí duy nhất kiêm cả CSKH lẫn VH.
          Kế thừa cả 2 group nhân viên qua implied_ids →
          thấy toàn bộ ticket của cả 2 bộ phận.
-         Có thêm quyền duyệt hoàn tiền trong hạn mức Lead.
     ══════════════════════════════════════════════════════════ -->
 
     <record id="group_lead" model="res.groups">
@@ -64,7 +63,6 @@
 
     <!-- ══════════════════════════════════════════════════════════
          TẦNG 3 — TRƯỞNG DỰ ÁN BIGTEL (TDABG)
-         Chịu trách nhiệm cao nhất cấp dự án Bigtel.
          Kế thừa Lead → thấy toàn bộ dữ liệu Bigtel.
          KHÔNG truy cập BigM / Ứng tiền Viettel.
          Duyệt trong hạn mức TDABG, escalate PPKD khi vượt.
@@ -88,9 +86,8 @@
 
     <!-- ══════════════════════════════════════════════════════════
          TẦNG 4 — PHÓ PHÒNG KINH DOANH (PPKD)
-         Phụ trách trực tiếp Bigtel + Mảng Tài chính lớp TM.
-         BigM / UTV: chỉ view-only để tham vấn TPKD.
          Kế thừa TDABG → full Bigtel + thêm TC lớp TM.
+         BigM / UTV: chỉ view-only.
          Escalate TPKD khi vượt hạn mức PPKD.
     ══════════════════════════════════════════════════════════ -->
 

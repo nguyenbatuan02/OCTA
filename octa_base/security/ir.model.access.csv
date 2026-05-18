@@ -8,4 +8,4 @@ access_octa_audit_log_ops,octa.audit.log ops,model_octa_audit_log,octa_base.grou
 access_octa_audit_log_lead,octa.audit.log lead,model_octa_audit_log,octa_base.group_lead,1,0,0,0
 access_octa_audit_log_tdabg,octa.audit.log tdabg,model_octa_audit_log,octa_base.group_tdabg,1,0,0,0
 access_octa_audit_log_ppkd,octa.audit.log ppkd,model_octa_audit_log,octa_base.group_ppkd,1,0,0,0
-access_octa_audit_log_tpkd,octa.audit.log tpkd,model_octa_audit_log,octa_base.group_tpkd,1,1,0,0
+access_octa_audit_log_tpkd,octa.audit.log tpkd,model_octa_audit_log,octa_base.group_tpkd,1,0,0,0

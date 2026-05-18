@@ -1,2 +1,12 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_project_task_user,project.task.user,project.model_project_task,project.group_project_user,1,1,1,0
+access_project_task_cskh,project.task cskh,project.model_project_task,octa_base.group_octa_cskh,1,1,1,0
+access_project_task_ops,project.task ops,project.model_project_task,octa_base.group_octa_ops,1,1,1,0
+access_project_task_lead,project.task lead,project.model_project_task,octa_base.group_lead,1,1,1,0
+access_project_task_tdabg,project.task tdabg,project.model_project_task,octa_base.group_tdabg,1,1,1,0
+access_project_task_ppkd,project.task ppkd,project.model_project_task,octa_base.group_ppkd,1,1,1,0
+access_project_task_tpkd,project.task tpkd,project.model_project_task,octa_base.group_tpkd,1,1,1,1
+access_project_task_type_cskh,project.task.type cskh,project.model_project_task_type,octa_base.group_octa_cskh,1,0,0,0
+access_project_task_type_ops,project.task.type ops,project.model_project_task_type,octa_base.group_octa_ops,1,0,0,0
+access_project_task_type_lead,project.task.type lead,project.model_project_task_type,octa_base.group_lead,1,0,0,0
+access_project_task_type_tdabg,project.task.type tdabg,project.model_project_task_type,octa_base.group_tdabg,1,1,1,0
+access_project_task_type_tpkd,project.task.type tpkd,project.model_project_task_type,octa_base.group_tpkd,1,1,1,1

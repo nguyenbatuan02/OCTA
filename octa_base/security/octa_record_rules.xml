@@ -1,114 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<!--
-    RECORD RULES — PHÂN QUYỀN DỮ LIỆU THEO SCOPE
 
-    Nguyên tắc:
-    - CSKH/Ops: thấy ticket dept của mình HOẶC được assign (user_ids)
-    - Lead trở lên: kế thừa qua implied_ids → tự động thấy cả 2 dept
-    - TDABG: thấy toàn bộ Bigtel, KHÔNG thấy BigM/UTV
-    - PPKD: Bigtel full + BigM/UTV view-only (xử lý ở view level)
-    - TPKD: thấy tất cả → không cần rule riêng (Odoo default)
-
-    Scope tag dùng cho project.task (octa_ticket extend):
-        scope = 'bigtel' | 'bigm' | 'utv'
-
-    Nếu chưa có field scope trên project.task (octa_ticket chưa deploy):
-    các rule dưới đây sẽ fallback an toàn vì domain [] = thấy tất cả
-    cho group không có rule.
--->
 <data noupdate="1">
 
-    <!-- ══════════════════════════════════════════════════════════
-         NHÂN VIÊN CSKH
-         Chỉ thấy task dept=cskh HOẶC được assign trực tiếp.
-         Điều này cho phép: Lead CSKH assign task VH cho NV CSKH
-         → NV CSKH vẫn thấy task đó dù dept=ops.
-    ══════════════════════════════════════════════════════════ -->
-    <record id="rule_task_cskh" model="ir.rule">
-        <field name="name">Octa: CSKH chỉ thấy ticket CSKH</field>
-        <field name="model_id" ref="project.model_project_task"/>
-        <field name="groups" eval="[(4, ref('octa_base.group_octa_cskh'))]"/>
+    <!-- ════════════════════════════════════════════════════════════
+         AUDIT LOG — SCOPE FILTER
+
+         TDABG và Lead: chỉ thấy audit log có scope_tag='bigtel'
+         hoặc chưa gán scope (hệ thống / technical log).
+
+         PPKD/TPKD: thấy toàn bộ log Phòng KD.
+         → Không cần rule riêng cho PPKD/TPKD
+           (Odoo default: không có rule → thấy tất cả trong phạm vi ACL).
+
+         Lưu ý: group_tdabg implied group_lead
+         → Rule này apply cho cả Lead vì Lead là subset của TDABG
+           NHƯNG Odoo apply rule của group thấp nhất user thuộc về.
+         → Cần 2 rule riêng biệt cho TDABG và Lead.
+    ════════════════════════════════════════════════════════════════ -->
+
+    <record id="rule_audit_log_lead_scope" model="ir.rule">
+        <field name="name">Octa: Lead chỉ thấy audit log Bigtel</field>
+        <field name="model_id" ref="model_octa_audit_log"/>
+        <field name="groups" eval="[(4, ref('octa_base.group_lead'))]"/>
         <field name="domain_force">
             ['|',
-                ('dept', '=', 'cskh'),
-                ('user_ids', 'in', [user.id])
+                ('scope_tag', '=', 'bigtel'),
+                ('scope_tag', '=', False)
             ]
         </field>
         <field name="perm_read"   eval="True"/>
-        <field name="perm_write"  eval="True"/>
-        <field name="perm_create" eval="True"/>
+        <field name="perm_write"  eval="False"/>
+        <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
 
-    <!-- ══════════════════════════════════════════════════════════
-         NHÂN VIÊN VẬN HÀNH
-    ══════════════════════════════════════════════════════════ -->
-    <record id="rule_task_ops" model="ir.rule">
-        <field name="name">Octa: Vận hành chỉ thấy ticket VH</field>
-        <field name="model_id" ref="project.model_project_task"/>
-        <field name="groups" eval="[(4, ref('octa_base.group_octa_ops'))]"/>
-        <field name="domain_force">
-            ['|',
-                ('dept', '=', 'ops'),
-                ('user_ids', 'in', [user.id])
-            ]
-        </field>
-        <field name="perm_read"   eval="True"/>
-        <field name="perm_write"  eval="True"/>
-        <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-
-    <!-- ══════════════════════════════════════════════════════════
-         TRƯỞNG DỰ ÁN BIGTEL
-         Thấy toàn bộ Bigtel (cskh + ops).
-         KHÔNG thấy task scope=bigm hoặc scope=utv.
-
-         Lưu ý: group_tdabg implied group_lead implied cskh+ops
-         → rules cskh/ops KHÔNG áp dụng cho TDABG vì Odoo chỉ
-         apply rule của group thấp nhất mà user thuộc về.
-         TDABG cần rule riêng để định nghĩa phạm vi của mình.
-    ══════════════════════════════════════════════════════════ -->
-    <record id="rule_task_tdabg" model="ir.rule">
-        <field name="name">Octa: TDABG chỉ thấy dữ liệu Bigtel</field>
-        <field name="model_id" ref="project.model_project_task"/>
+    <record id="rule_audit_log_tdabg_scope" model="ir.rule">
+        <field name="name">Octa: TDABG chỉ thấy audit log Bigtel</field>
+        <field name="model_id" ref="model_octa_audit_log"/>
         <field name="groups" eval="[(4, ref('octa_base.group_tdabg'))]"/>
         <field name="domain_force">
             ['|',
-                ('scope', '=', 'bigtel'),
-                ('scope', '=', False)
+                ('scope_tag', '=', 'bigtel'),
+                ('scope_tag', '=', False)
             ]
         </field>
         <field name="perm_read"   eval="True"/>
-        <field name="perm_write"  eval="True"/>
-        <field name="perm_create" eval="True"/>
-        <field name="perm_unlink" eval="False"/>
-    </record>
-
-    <!-- ══════════════════════════════════════════════════════════
-         PHÓ PHÒNG KINH DOANH
-         Bigtel: full access.
-         BigM + UTV: view-only — xử lý bằng cách remove perm_write/create
-         trên scope bigm/utv (tầng view sẽ disable button).
-         Rule này cho phép đọc tất cả để tham vấn TPKD.
-    ══════════════════════════════════════════════════════════ -->
-    <record id="rule_task_ppkd" model="ir.rule">
-        <field name="name">Octa: PPKD thấy Bigtel full + BigM/UTV view</field>
-        <field name="model_id" ref="project.model_project_task"/>
-        <field name="groups" eval="[(4, ref('octa_base.group_ppkd'))]"/>
-        <field name="domain_force">[(1, '=', 1)]</field>
-        <field name="perm_read"   eval="True"/>
-        <field name="perm_write"  eval="True"/>
-        <field name="perm_create" eval="True"/>
+        <field name="perm_write"  eval="False"/>
+        <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
 
     <!--
-        TPKD — không cần rule riêng.
-        Odoo default: nếu không có rule cho group → thấy tất cả.
-        group_tpkd không có rule → TPKD thấy toàn bộ dữ liệu.
+        PPKD: thấy Bigtel full + TC_TM + AUTHORIZED scope.
+        Không thấy log BigM/UTV trực tiếp (chỉ xem qua dashboard tổng hợp).
     -->
+    <record id="rule_audit_log_ppkd_scope" model="ir.rule">
+        <field name="name">Octa: PPKD thấy log Bigtel + TC_TM + Authorized</field>
+        <field name="model_id" ref="model_octa_audit_log"/>
+        <field name="groups" eval="[(4, ref('octa_base.group_ppkd'))]"/>
+        <field name="domain_force">
+            ['|', '|', '|',
+                ('scope_tag', '=', 'bigtel'),
+                ('scope_tag', '=', 'tc_tm'),
+                ('scope_tag', '=', 'authorized'),
+                ('scope_tag', '=', False)
+            ]
+        </field>
+        <field name="perm_read"   eval="True"/>
+        <field name="perm_write"  eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!--
+        TPKD: thấy toàn bộ log Phòng KD (tất cả scope).
+        Không cần rule riêng — Odoo default không có rule → thấy tất cả.
+        Nhưng để explicit và dễ audit, vẫn khai báo rule open.
+    -->
+    <record id="rule_audit_log_tpkd_scope" model="ir.rule">
+        <field name="name">Octa: TPKD thấy toàn bộ audit log</field>
+        <field name="model_id" ref="model_octa_audit_log"/>
+        <field name="groups" eval="[(4, ref('octa_base.group_tpkd'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read"   eval="True"/>
+        <field name="perm_write"  eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
 
 </data>
 </odoo>
