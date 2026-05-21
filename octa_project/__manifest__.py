@@ -18,7 +18,7 @@
     'author': 'Octa',
     'depends': [
         'project',
-        'octa_base',   #
+        'octa_base',   
     ],
     'data': [
         'security/ir.model.access.csv',

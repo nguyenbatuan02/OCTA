@@ -42,6 +42,13 @@ class OctaApprovalConfig(models.Model):
     )
     note = fields.Text('Ghi chú / căn cứ', tracking=True)
 
+    currency_id = fields.Many2one(
+        'res.currency',
+        string='Currency',
+        default=lambda self: self.env.company.currency_id.id,
+        readonly=True,
+    )
+
     # ── Hạn mức hoàn tiền / nạp bù (VNĐ) ──────────────────────────
 
     limit_lead = fields.Float(

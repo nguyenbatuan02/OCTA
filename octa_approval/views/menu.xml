@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_octa_approval_nv_root"
+              name="Phê duyệt"
+              parent="octa_ticket.menu_octa_ticket_root"
+              sequence="60"
+              groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"/>
+
+    <menuitem id="menu_octa_approval_my"
+              name="Phiếu của tôi"
+              parent="menu_octa_approval_nv_root"
+              action="action_octa_approval_my"
+              groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+              sequence="10"/>
+
+    <!-- ── Dành cho Lead trở lên ──────────────────────────────── -->
+    <!-- Gắn vào root Octa (octa_base.menu_octa_root) -->
+    <menuitem id="menu_octa_approval_mgr_root"
+              name="Phê duyệt"
+              parent="octa_base.menu_octa_root"
+              sequence="20"
+              groups="octa_base.group_lead"/>
+
+    <menuitem id="menu_octa_approval_pending"
+              name="Chờ tôi duyệt"
+              parent="menu_octa_approval_mgr_root"
+              action="action_octa_approval_pending"
+              groups="octa_base.group_lead"
+              sequence="5"/>
+
+    <menuitem id="menu_octa_approval_all"
+              name="Tất cả phiếu"
+              parent="menu_octa_approval_mgr_root"
+              action="action_octa_approval_all"
+              groups="octa_base.group_tdabg"
+              sequence="10"/>
+
+    <menuitem id="menu_octa_approval_my_mgr"
+              name="Phiếu của tôi"
+              parent="menu_octa_approval_mgr_root"
+              action="action_octa_approval_my"
+              groups="octa_base.group_lead"
+              sequence="15"/>
+
+</odoo>

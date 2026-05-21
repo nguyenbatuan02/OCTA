@@ -1,0 +1,18 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_octa_approval_cskh,octa.approval cskh,model_octa_approval,octa_base.group_octa_cskh,1,1,1,0
+access_octa_approval_ops,octa.approval ops,model_octa_approval,octa_base.group_octa_ops,1,1,1,0
+access_octa_approval_lead,octa.approval lead,model_octa_approval,octa_base.group_lead,1,1,1,0
+access_octa_approval_tdabg,octa.approval tdabg,model_octa_approval,octa_base.group_tdabg,1,1,1,0
+access_octa_approval_ppkd,octa.approval ppkd,model_octa_approval,octa_base.group_ppkd,1,1,1,0
+access_octa_approval_tpkd,octa.approval tpkd,model_octa_approval,octa_base.group_tpkd,1,1,1,1
+access_octa_approval_escalation_cskh,octa.approval.escalation cskh,model_octa_approval_escalation,octa_base.group_octa_cskh,1,0,0,0
+access_octa_approval_escalation_lead,octa.approval.escalation lead,model_octa_approval_escalation,octa_base.group_lead,1,0,1,0
+access_octa_approval_escalation_tdabg,octa.approval.escalation tdabg,model_octa_approval_escalation,octa_base.group_tdabg,1,0,1,0
+access_octa_approval_escalation_ppkd,octa.approval.escalation ppkd,model_octa_approval_escalation,octa_base.group_ppkd,1,0,1,0
+access_octa_approval_escalation_tpkd,octa.approval.escalation tpkd,model_octa_approval_escalation,octa_base.group_tpkd,1,0,1,1
+access_octa_approval_wizard_cskh,octa.approval.action.wizard cskh,model_octa_approval_action_wizard,octa_base.group_octa_cskh,1,1,1,1
+access_octa_approval_wizard_ops,octa.approval.action.wizard ops,model_octa_approval_action_wizard,octa_base.group_octa_ops,1,1,1,1
+access_octa_approval_wizard_lead,octa.approval.action.wizard lead,model_octa_approval_action_wizard,octa_base.group_lead,1,1,1,1
+access_octa_approval_wizard_tdabg,octa.approval.action.wizard tdabg,model_octa_approval_action_wizard,octa_base.group_tdabg,1,1,1,1
+access_octa_approval_wizard_ppkd,octa.approval.action.wizard ppkd,model_octa_approval_action_wizard,octa_base.group_ppkd,1,1,1,1
+access_octa_approval_wizard_tpkd,octa.approval.action.wizard tpkd,model_octa_approval_action_wizard,octa_base.group_tpkd,1,1,1,1

@@ -1,0 +1,16 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_octa_gateway_lead,octa.gateway lead,model_octa_gateway,octa_base.group_lead,1,0,0,0
+access_octa_gateway_tdabg,octa.gateway tdabg,model_octa_gateway,octa_base.group_tdabg,1,1,1,0
+access_octa_gateway_ppkd,octa.gateway ppkd,model_octa_gateway,octa_base.group_ppkd,1,1,1,0
+access_octa_gateway_tpkd,octa.gateway tpkd,model_octa_gateway,octa_base.group_tpkd,1,1,1,1
+access_octa_gateway_cmd_lead,octa.gateway.command lead,model_octa_gateway_command,octa_base.group_lead,1,0,1,0
+access_octa_gateway_cmd_tdabg,octa.gateway.command tdabg,model_octa_gateway_command,octa_base.group_tdabg,1,1,1,0
+access_octa_gateway_cmd_ppkd,octa.gateway.command ppkd,model_octa_gateway_command,octa_base.group_ppkd,1,1,1,0
+access_octa_gateway_cmd_tpkd,octa.gateway.command tpkd,model_octa_gateway_command,octa_base.group_tpkd,1,1,1,1
+access_octa_gw_cmd_wiz_lead,octa.gateway.command.wizard lead,model_octa_gateway_command_wizard,octa_base.group_lead,1,1,1,1
+access_octa_gw_cmd_wiz_tdabg,octa.gateway.command.wizard tdabg,model_octa_gateway_command_wizard,octa_base.group_tdabg,1,1,1,1
+access_octa_gw_cmd_wiz_ppkd,octa.gateway.command.wizard ppkd,model_octa_gateway_command_wizard,octa_base.group_ppkd,1,1,1,1
+access_octa_gw_cmd_wiz_tpkd,octa.gateway.command.wizard tpkd,model_octa_gateway_command_wizard,octa_base.group_tpkd,1,1,1,1
+access_octa_gw_sup_wiz_tdabg,octa.gateway.supplemental.wizard tdabg,model_octa_gateway_supplemental_wizard,octa_base.group_tdabg,1,1,1,1
+access_octa_gw_sup_wiz_ppkd,octa.gateway.supplemental.wizard ppkd,model_octa_gateway_supplemental_wizard,octa_base.group_ppkd,1,1,1,1
+access_octa_gw_sup_wiz_tpkd,octa.gateway.supplemental.wizard tpkd,model_octa_gateway_supplemental_wizard,octa_base.group_tpkd,1,1,1,1

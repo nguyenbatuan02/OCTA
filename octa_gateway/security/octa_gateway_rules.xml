@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+    <!-- Lead/TDABG: chỉ thấy cổng scope=bigtel -->
+    <record id="rule_gateway_lead" model="ir.rule">
+        <field name="name">Octa Gateway: Lead chỉ thấy cổng Bigtel</field>
+        <field name="model_id" ref="model_octa_gateway"/>
+        <field name="groups" eval="[(4, ref('octa_base.group_lead'))]"/>
+        <field name="domain_force">[('scope', '=', 'bigtel')]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_gateway_tdabg" model="ir.rule">
+        <field name="name">Octa Gateway: TDABG chỉ thấy cổng Bigtel</field>
+        <field name="model_id" ref="model_octa_gateway"/>
+        <field name="groups" eval="[(4, ref('octa_base.group_tdabg'))]"/>
+        <field name="domain_force">[('scope', '=', 'bigtel')]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- PPKD/TPKD: thấy tất cả scope -->
+    <record id="rule_gateway_ppkd" model="ir.rule">
+        <field name="name">Octa Gateway: PPKD thấy tất cả cổng</field>
+        <field name="model_id" ref="model_octa_gateway"/>
+        <field name="groups" eval="[(4, ref('octa_base.group_ppkd'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</data>
+</odoo>

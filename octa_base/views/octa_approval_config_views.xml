@@ -88,37 +88,37 @@
                                     <field name="limit_lead"
                                            string="Lead CSKH &amp; Vận hành"
                                            widget="monetary"
-                                           options="{'currency_field': false}"
+                                           options="{'currency_field': 'currency_id'}"
                                            placeholder="VD: 500,000"/>
                                     <field name="limit_tdabg"
                                            string="Trưởng dự án Bigtel (TDABG)"
                                            widget="monetary"
-                                           options="{'currency_field': false}"
+                                           options="{'currency_field': 'currency_id'}"
                                            placeholder="VD: 2,000,000"/>
                                     <field name="limit_ppkd"
                                            string="Phó phòng Kinh doanh (PPKD)"
                                            widget="monetary"
-                                           options="{'currency_field': false}"
+                                           options="{'currency_field': 'currency_id'}"
                                            placeholder="VD: 10,000,000"/>
                                     <field name="limit_tpkd"
                                            string="Trưởng phòng Kinh doanh (TPKD)"
                                            widget="monetary"
-                                           options="{'currency_field': false}"
+                                           options="{'currency_field': 'currency_id'}"
                                            placeholder="VD: 50,000,000"/>
                                 </group>
                                 <group string="Hạn mức công nợ đại lý (VNĐ)">
                                     <field name="debt_limit_tdabg"
                                            string="TDABG duyệt"
                                            widget="monetary"
-                                           options="{'currency_field': false}"/>
+                                           options="{'currency_field': 'currency_id'}"/>
                                     <field name="debt_limit_ppkd"
                                            string="PPKD duyệt"
                                            widget="monetary"
-                                           options="{'currency_field': false}"/>
+                                           options="{'currency_field': 'currency_id'}"/>
                                     <field name="debt_limit_tpkd"
                                            string="TPKD duyệt"
                                            widget="monetary"
-                                           options="{'currency_field': false}"/>
+                                           options="{'currency_field': 'currency_id'}"/>
                                 </group>
                             </group>
                             <group>
@@ -126,12 +126,12 @@
                                     <field name="ncc_limit_tdabg"
                                            string="TDABG duyệt"
                                            widget="monetary"
-                                           options="{'currency_field': false}"
+                                           options="{'currency_field': 'currency_id'}"
                                            help="Đặt 0 = TDABG không được tự duyệt NCC mới"/>
                                     <field name="ncc_limit_ppkd"
                                            string="PPKD duyệt"
                                            widget="monetary"
-                                           options="{'currency_field': false}"/>
+                                           options="{'currency_field': 'currency_id'}"/>
                                 </group>
                             </group>
                         </page>
@@ -174,7 +174,7 @@
                                     <field name="flight_fund_warning"
                                            string="Cảnh báo quỹ vé máy bay (VNĐ)"
                                            widget="monetary"
-                                           options="{'currency_field': false}"
+                                           options="{'currency_field': 'currency_id'}"
                                            help="Quỹ xuất vé ≤ X VNĐ → đề xuất nạp thêm (VH07)"/>
                                 </group>
                             </group>
@@ -233,13 +233,13 @@
                 <field name="active"       string="Đang áp dụng" widget="boolean"/>
                 <field name="effective_date" string="Ngày hiệu lực"/>
                 <field name="limit_lead"   string="Lead (VNĐ)"
-                       widget="monetary" options="{'currency_field': false}"/>
+                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 <field name="limit_tdabg"  string="TDABG (VNĐ)"
-                       widget="monetary" options="{'currency_field': false}"/>
+                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 <field name="limit_ppkd"   string="PPKD (VNĐ)"
-                       widget="monetary" options="{'currency_field': false}"/>
+                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 <field name="limit_tpkd"   string="TPKD (VNĐ)"
-                       widget="monetary" options="{'currency_field': false}"/>
+                       widget="monetary" options="{'currency_field': 'currency_id'}"/>
                 <field name="approved_by"  string="Phê duyệt bởi"/>
             </tree>
         </field>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="menu_octa_partner_root"
+              name="Đối tác"
+              parent="octa_base.menu_octa_root"
+              sequence="25"
+              groups="octa_base.group_lead"/>
+
+    <menuitem id="menu_octa_ncc"
+              name="Nhà cung cấp (NCC)"
+              parent="menu_octa_partner_root"
+              action="action_octa_ncc"
+              sequence="10"
+              groups="octa_base.group_tdabg"/>
+
+    <menuitem id="menu_octa_agent"
+              name="Đại lý"
+              parent="menu_octa_partner_root"
+              action="action_octa_agent"
+              sequence="20"
+              groups="octa_base.group_lead"/>
+
+    <menuitem id="menu_octa_partner_red_line"
+              name="🔴 Ranh đỏ đối tác"
+              parent="menu_octa_partner_root"
+              action="action_octa_partner_red_line"
+              sequence="30"
+              groups="octa_base.group_tdabg"/>
+
+</odoo>

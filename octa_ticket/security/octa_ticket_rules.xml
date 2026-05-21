@@ -1,39 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <data noupdate="1">
-
-    <!--
-      LOGIC PHÂN QUYỀN:
-      - CSKH  → thấy ticket dept='cskh' HOẶC được assign (user_ids)
-      - VH    → thấy ticket dept='ops'  HOẶC được assign (user_ids)
-      - Manager → KHÔNG có rule → thấy tất cả (Odoo default)
-
-      Ticket phối hợp: khi CSKH tạo linked_ticket và assign NV Vận hành
-      vào ticket CSKH → NV Vận hành tự thấy qua điều kiện user_ids.
-      Không cần rule đặc biệt thêm.
-    -->
-
+<data noupdate="1">
+    <!-- NV CSKH: chỉ thấy dept=cskh HOẶC được assign trực tiếp -->
     <record id="rule_task_cskh" model="ir.rule">
-      <field name="name">Octa Ticket: CSKH chỉ thấy ticket CSKH</field>
-      <field name="model_id" ref="project.model_project_task"/>
-      <field name="groups" eval="[(4, ref('octa_ticket.group_octa_cskh'))]"/>
-      <field name="domain_force">['|', ('dept', '=', 'cskh'), ('user_ids', 'in', [user.id])]</field>
-      <field name="perm_read"   eval="True"/>
-      <field name="perm_write"  eval="True"/>
-      <field name="perm_create" eval="True"/>
-      <field name="perm_unlink" eval="False"/>
+        <field name="name">Octa Ticket: CSKH chỉ thấy ticket CSKH</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="groups" eval="[(4, ref('octa_base.group_octa_cskh'))]"/>
+        <field name="domain_force">
+            ['|', ('dept', '=', 'cskh'), ('user_ids', 'in', [user.id])]
+        </field>
+        <field name="perm_read"   eval="True"/>
+        <field name="perm_write"  eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
     </record>
 
+    <!-- NV Vận hành: chỉ thấy dept=ops HOẶC được assign trực tiếp -->
     <record id="rule_task_ops" model="ir.rule">
-      <field name="name">Octa Ticket: Vận hành chỉ thấy ticket Vận hành</field>
-      <field name="model_id" ref="project.model_project_task"/>
-      <field name="groups" eval="[(4, ref('octa_ticket.group_octa_ops'))]"/>
-      <field name="domain_force">['|', ('dept', '=', 'ops'), ('user_ids', 'in', [user.id])]</field>
-      <field name="perm_read"   eval="True"/>
-      <field name="perm_write"  eval="True"/>
-      <field name="perm_create" eval="True"/>
-      <field name="perm_unlink" eval="False"/>
+        <field name="name">Octa Ticket: Vận hành chỉ thấy ticket VH</field>
+        <field name="model_id" ref="project.model_project_task"/>
+        <field name="groups" eval="[(4, ref('octa_base.group_octa_ops'))]"/>
+        <field name="domain_force">
+            ['|', ('dept', '=', 'ops'), ('user_ids', 'in', [user.id])]
+        </field>
+        <field name="perm_read"   eval="True"/>
+        <field name="perm_write"  eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
     </record>
 
-  </data>
+</data>
 </odoo>

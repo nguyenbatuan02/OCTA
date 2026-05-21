@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ COMMAND LIST ══ -->
+    <record id="view_octa_gateway_command_list" model="ir.ui.view">
+        <field name="name">octa.gateway.command.list</field>
+        <field name="model">octa.gateway.command</field>
+        <field name="arch" type="xml">
+            <tree string="Lịch sử lệnh cổng"
+                  decoration-danger="emergency == True and supplemental_state == 'pending'"
+                  decoration-warning="emergency == True"
+                  create="false">
+                <field name="name"/>
+                <field name="gateway_id"/>
+                <field name="command"/>
+                <field name="issued_by"/>
+                <field name="issued_at"/>
+                <field name="reason"/>
+                <field name="emergency" widget="boolean"/>
+                <field name="state"/>
+                <field name="supplemental_state"/>
+                <button name="action_supplemental_approve"
+                        type="object"
+                        string="Phê duyệt bổ sung"
+                        icon="fa-check"
+                        invisible="not emergency or supplemental_state == 'approved'"
+                        groups="octa_base.group_tdabg"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="action_octa_gateway_command" model="ir.actions.act_window">
+        <field name="name">Lịch sử lệnh cổng</field>
+        <field name="res_model">octa.gateway.command</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{'create': False}</field>
+    </record>
+
+</odoo>

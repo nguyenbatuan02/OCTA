@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_res_partner_lead,res.partner lead,base.model_res_partner,octa_base.group_lead,1,0,0,0
+access_res_partner_tdabg,res.partner tdabg,base.model_res_partner,octa_base.group_tdabg,1,1,1,0
+access_res_partner_ppkd,res.partner ppkd,base.model_res_partner,octa_base.group_ppkd,1,1,1,0
+access_res_partner_tpkd,res.partner tpkd,base.model_res_partner,octa_base.group_tpkd,1,1,1,1

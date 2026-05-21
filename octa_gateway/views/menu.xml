@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+    <menuitem id="menu_octa_gateway_root"
+              name="Cổng API"
+              parent="octa_base.menu_octa_root"
+              sequence="30"
+              groups="octa_base.group_lead"/>
+
+    <menuitem id="menu_octa_gateway_list"
+              name="Danh sách cổng"
+              parent="menu_octa_gateway_root"
+              action="action_octa_gateway"
+              sequence="10"
+              groups="octa_base.group_lead"/>
+
+    <menuitem id="menu_octa_gateway_locked"
+              name="🔴 Cổng đang khóa"
+              parent="menu_octa_gateway_root"
+              action="action_octa_gateway_locked"
+              sequence="20"
+              groups="octa_base.group_lead"/>
+
+    <menuitem id="menu_octa_gateway_commands"
+              name="Lịch sử lệnh"
+              parent="menu_octa_gateway_root"
+              action="action_octa_gateway_command"
+              sequence="30"
+              groups="octa_base.group_tdabg"/>
+
+</odoo>

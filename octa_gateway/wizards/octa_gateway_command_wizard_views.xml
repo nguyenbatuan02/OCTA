@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══ WIZARD LỆNH CỔNG ══ -->
+    <record id="view_octa_gateway_command_wizard_form" model="ir.ui.view">
+        <field name="name">octa.gateway.command.wizard.form</field>
+        <field name="model">octa.gateway.command.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Lệnh cổng API">
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        Cổng: <strong><field name="gateway_id" readonly="1" nolabel="1"/></strong>
+                        — Trạng thái hiện tại:
+                        <field name="gateway_state" readonly="1" nolabel="1"/>
+                    </div>
+
+                    <!-- Cảnh báo lệnh khẩn -->
+                    <div class="alert alert-danger" invisible="not emergency">
+                        ⚡ <strong>LỆNH KHẨN CẤP</strong> —
+                        Lệnh sẽ thực hiện ngay lập tức.
+                        Bắt buộc bổ sung phê duyệt trong 2 giờ.
+                    </div>
+
+                    <group>
+                        <field name="command" widget="radio"/>
+                        <field name="emergency" widget="boolean_toggle"/>
+                        <field name="reason"
+                               placeholder="Bắt buộc nhập lý do đầy đủ..."
+                               required="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_execute"
+                            string="⚡ Thực hiện lệnh"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Huỷ" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ══ WIZARD PHÊ DUYỆT BỔ SUNG ══ -->
+    <record id="view_octa_gateway_supplemental_wizard_form" model="ir.ui.view">
+        <field name="name">octa.gateway.supplemental.wizard.form</field>
+        <field name="model">octa.gateway.supplemental.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Phê duyệt bổ sung lệnh khẩn">
+                <sheet>
+                    <div class="alert alert-warning">
+                        Phê duyệt bổ sung cho lệnh khẩn cấp cổng:
+                        <strong><field name="gateway_name" readonly="1" nolabel="1"/></strong>
+                    </div>
+                    <group>
+                        <field name="original_reason"
+                               string="Lý do ra lệnh" readonly="1"/>
+                        <field name="reason"
+                               string="Lý do phê duyệt bổ sung *"
+                               required="1"
+                               placeholder="Xác nhận lệnh khẩn hợp lệ vì..."/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_approve"
+                            string="✅ Phê duyệt bổ sung"
+                            type="object"
+                            class="btn-success"/>
+                    <button string="Huỷ" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

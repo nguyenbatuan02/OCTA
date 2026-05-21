@@ -1,83 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-  <!-- Root menu: ai có bất kỳ group Octa nào đều thấy -->
-  <menuitem id="menu_octa_root"
-            name="OCTA Tickets"
-            sequence="50"
-            groups="octa_ticket.group_octa_cskh,octa_ticket.group_octa_ops,octa_ticket.group_octa_manager"/>
+    <menuitem id="menu_octa_ticket_root"
+              name="Octa"
+              sequence="50"
+              groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"/>
 
-  <!-- ── Tất cả: chỉ Manager ── -->
-  <menuitem id="menu_octa_ticket_all"
-            name="Tất cả Tickets"
-            parent="menu_octa_root"
-            action="action_octa_ticket_all"
-            groups="octa_ticket.group_octa_manager"
-            sequence="5"/>
+   
+    <menuitem id="menu_octa_ticket_all"
+              name="Tất cả Tickets"
+              parent="menu_octa_ticket_root"
+              action="action_octa_ticket_all"
+              groups="octa_base.group_lead"
+              sequence="5"/>
 
-  <!-- ── CSKH: chỉ group CSKH + Manager ── -->
-  <menuitem id="menu_octa_cskh_root"
-            name="Chăm sóc khách hàng"
-            parent="menu_octa_root"
-            groups="octa_ticket.group_octa_cskh,octa_ticket.group_octa_manager"
-            sequence="10"/>
+    
+    <menuitem id="menu_octa_cskh_root"
+              name="Chăm sóc khách hàng"
+              parent="menu_octa_ticket_root"
+              groups="octa_base.group_octa_cskh"
+              sequence="10"/>
 
-  <menuitem id="menu_octa_ticket_cskh"
-            name="Ticket CSKH"
-            parent="menu_octa_cskh_root"
-            action="action_octa_ticket_cskh"
-            groups="octa_ticket.group_octa_cskh,octa_ticket.group_octa_manager"
-            sequence="10"/>
+    <menuitem id="menu_octa_ticket_cskh"
+              name="Ticket CSKH"
+              parent="menu_octa_cskh_root"
+              action="action_octa_ticket_cskh"
+              groups="octa_base.group_octa_cskh"
+              sequence="10"/>
 
-  <!-- <menuitem id="menu_octa_ticket_incident_cskh"
-            name="Sự vụ"
-            parent="menu_octa_cskh_root"
-            action="action_octa_ticket_incident"
-            groups="octa_ticket.group_octa_cskh,octa_ticket.group_octa_manager"
-            sequence="20"/>
+    <menuitem id="menu_octa_ops_root"
+              name="Vận hành thương mại"
+              parent="menu_octa_ticket_root"
+              groups="octa_base.group_octa_ops"
+              sequence="20"/>
 
-  <menuitem id="menu_octa_ticket_periodic_cskh"
-            name="Checklist Định kỳ"
-            parent="menu_octa_cskh_root"
-            action="action_octa_ticket_periodic"
-            groups="octa_ticket.group_octa_cskh,octa_ticket.group_octa_manager"
-            sequence="30"/> -->
+    <menuitem id="menu_octa_ticket_ops"
+              name="Ticket Vận hành"
+              parent="menu_octa_ops_root"
+              action="action_octa_ticket_ops"
+              groups="octa_base.group_octa_ops"
+              sequence="10"/>
 
-  <!-- ── Vận hành: chỉ group Vận hành + Manager ── -->
-  <menuitem id="menu_octa_ops_root"
-            name="Vận hành thương mại"
-            parent="menu_octa_root"
-            groups="octa_ticket.group_octa_ops,octa_ticket.group_octa_manager"
-            sequence="20"/>
+    <menuitem id="menu_octa_ticket_overdue"
+              name="Quá SLA"
+              parent="menu_octa_ticket_root"
+              action="action_octa_ticket_overdue"
+              groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+              sequence="40"/>
 
-  <menuitem id="menu_octa_ticket_ops"
-            name="Ticket Vận hành"
-            parent="menu_octa_ops_root"
-            action="action_octa_ticket_ops"
-            groups="octa_ticket.group_octa_ops,octa_ticket.group_octa_manager"
-            sequence="10"/>
+    <menuitem id="menu_octa_ticket_waiting"
+              name="Chờ phối hợp"
+              parent="menu_octa_ticket_root"
+              action="action_octa_ticket_waiting"
+              groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+              sequence="45"/>
 
-  <!-- ── Chung: Quá SLA + Chờ phối hợp ── -->
-  <menuitem id="menu_octa_ticket_overdue"
-            name="Quá SLA"
-            parent="menu_octa_root"
-            action="action_octa_ticket_overdue"
-            groups="octa_ticket.group_octa_cskh,octa_ticket.group_octa_ops,octa_ticket.group_octa_manager"
-            sequence="40"/>
-
-  <menuitem id="menu_octa_ticket_waiting"
-            name="Chờ phối hợp"
-            parent="menu_octa_root"
-            action="action_octa_ticket_waiting"
-            groups="octa_ticket.group_octa_cskh,octa_ticket.group_octa_ops,octa_ticket.group_octa_manager"
-            sequence="45"/>
-
-  <!-- ── Import: Manager + CSKH ── -->
-  <menuitem id="menu_octa_ticket_import"
-            name="Import từ Excel"
-            parent="menu_octa_root"
-            action="action_ticket_import_wizard"
-            groups="octa_ticket.group_octa_manager,octa_ticket.group_octa_cskh"
-            sequence="50"/>
+ 
+    <menuitem id="menu_octa_ticket_import"
+              name="Import từ Excel"
+              parent="menu_octa_ticket_root"
+              action="action_ticket_import_wizard"
+              groups="octa_base.group_lead"
+              sequence="50"/>
 
 </odoo>

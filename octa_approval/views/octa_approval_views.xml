@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ══════════════════════════════════════════════════════════
+         WIZARD VIEW — Approve / Reject / Escalate
+    ══════════════════════════════════════════════════════════ -->
+    <record id="view_octa_approval_action_wizard_form" model="ir.ui.view">
+        <field name="name">octa.approval.action.wizard.form</field>
+        <field name="model">octa.approval.action.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="action" invisible="1"/>
+                    <!-- Banner thông tin phiếu -->
+                    <div class="alert alert-info" role="alert">
+                        <strong>
+                            <field name="approval_type" readonly="1" nolabel="1"/>
+                        </strong>
+                        — Tầng duyệt hiện tại:
+                        <field name="current_role" readonly="1" nolabel="1"/>
+                    </div>
+
+                    <!-- Hiển thị hạn mức khi là loại refund/debt -->
+                    <group string="Thông tin hạn mức"
+                           invisible="action not in ['approve', 'escalate']">
+                        <group>
+                            <field name="amount"          string="Số tiền đề xuất (VNĐ)"
+                                   widget="monetary" options="{'currency_field': false}"/>
+                            <field name="limit_display"   string="Hạn mức tầng này (VNĐ)"
+                                   widget="monetary" options="{'currency_field': false}"/>
+                        </group>
+                        <group>
+                            <field name="amount_vs_limit" string="Chênh lệch (VNĐ)"
+                                   widget="monetary" options="{'currency_field': false}"/>
+                        </group>
+                    </group>
+
+                    <!-- Cảnh báo vượt hạn mức -->
+                    <div class="alert alert-danger"
+                         invisible="amount_vs_limit &lt;= 0">
+                        <strong>⚠ Vượt hạn mức!</strong>
+                        Số tiền vượt hạn mức
+                        <field name="amount_vs_limit" nolabel="1" readonly="1"
+                               widget="monetary" options="{'currency_field': false}"/> VNĐ.
+                        Phiếu này cần được chuyển lên tầng trên.
+                    </div>
+
+                    <group>
+                        <field name="reason"
+                               string="Lý do *"
+                               placeholder="Bắt buộc nhập lý do..."
+                               required="1"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm"
+                            string="Xác nhận"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Huỷ"
+                            class="btn-secondary"
+                            special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════
+         FORM VIEW — Phiếu phê duyệt
+    ══════════════════════════════════════════════════════════ -->
+    <record id="view_octa_approval_form" model="ir.ui.view">
+        <field name="name">octa.approval.form</field>
+        <field name="model">octa.approval</field>
+        <field name="arch" type="xml">
+            <form string="Phiếu phê duyệt">
+                <header>
+                    <!-- Nút Nộp phiếu -->
+                    <button name="action_submit"
+                            string="Nộp phiếu"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state != 'draft'"/>
+
+                    <!-- Nút Phê duyệt — chỉ hiện khi can_approve=True -->
+                    <button name="action_approve"
+                            string="✓ Phê duyệt"
+                            type="object"
+                            class="btn-success"
+                            invisible="not can_approve"/>
+
+                    <!-- Nút Escalate — chỉ hiện khi can_escalate=True -->
+                    <button name="action_escalate"
+                            string="↑ Chuyển tầng trên"
+                            type="object"
+                            class="btn-warning"
+                            invisible="not can_escalate"/>
+
+                    <!-- Nút Từ chối -->
+                    <button name="action_reject"
+                            string="✗ Từ chối"
+                            type="object"
+                            class="btn-danger"
+                            invisible="state != 'pending'"/>
+
+                    <!-- Nút Huỷ -->
+                    <button name="action_cancel"
+                            string="Huỷ phiếu"
+                            type="object"
+                            invisible="state in ['approved', 'rejected', 'cancelled']"/>
+
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="draft,pending,approved,rejected"/>
+                </header>
+
+                <sheet>
+                    <!-- Hidden fields cho invisible conditions -->
+                    <field name="can_approve"   invisible="1"/>
+                    <field name="can_escalate"  invisible="1"/>
+
+                    <!-- Banner vượt hạn mức -->
+                    <div class="alert alert-danger mb-3"
+                         invisible="state != 'pending' or amount_vs_limit &lt;= 0">
+                        <strong>⚠ Vượt hạn mức tầng này!</strong>
+                        Số tiền <b><field name="amount" nolabel="1" readonly="1"
+                               widget="monetary" options="{'currency_field': false}"/> VNĐ</b>
+                        vượt hạn mức <b><field name="limit_display" nolabel="1" readonly="1"
+                               widget="monetary" options="{'currency_field': false}"/> VNĐ</b>.
+                        Nhấn <b>Chuyển tầng trên</b> để tiếp tục.
+                    </div>
+
+                    <!-- Banner đã duyệt -->
+                    <div class="alert alert-success mb-3"
+                         invisible="state != 'approved'">
+                        ✅ Phiếu đã được phê duyệt bởi
+                        <field name="approved_by_id" nolabel="1" readonly="1"/>
+                        lúc <field name="approved_at" nolabel="1" readonly="1"/>
+                    </div>
+
+                    <!-- Banner từ chối -->
+                    <div class="alert alert-danger mb-3"
+                         invisible="state != 'rejected'">
+                        ❌ Phiếu bị từ chối bởi
+                        <field name="rejected_by_id" nolabel="1" readonly="1"/>
+                        lúc <field name="rejected_at" nolabel="1" readonly="1"/>.
+                        Lý do: <field name="reject_reason" nolabel="1" readonly="1"/>
+                    </div>
+
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+
+                    <group>
+                        <group string="Thông tin phiếu">
+                            <field name="approval_type" readonly="state != 'draft'"/>
+                            <field name="scope"         readonly="state != 'draft'"/>
+                            <field name="requester_id"  readonly="1"/>
+                            <field name="current_approver_role" readonly="1"/>
+                            <field name="ticket_id"     readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Số tiền"
+                               invisible="approval_type not in ['refund', 'debt']">
+                            <field name="amount"
+                                   widget="monetary"
+                                   options="{'currency_field': false}"
+                                   readonly="state != 'draft'"/>
+                            <field name="limit_display"
+                                   widget="monetary"
+                                   options="{'currency_field': false}"
+                                   readonly="1"
+                                   string="Hạn mức tầng hiện tại"/>
+                            <field name="amount_vs_limit"
+                                   widget="monetary"
+                                   options="{'currency_field': false}"
+                                   readonly="1"
+                                   string="Chênh lệch (+ = vượt hạn mức)"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <field name="description"
+                               string="Nội dung / Lý do đề xuất"
+                               placeholder="Mô tả chi tiết đề xuất, căn cứ, tài liệu tham chiếu..."
+                               readonly="state != 'draft'"/>
+                    </group>
+
+                    <group string="Tài liệu đính kèm">
+                        <field name="attachment_ids"
+                               widget="many2many_binary"
+                               nolabel="1"/>
+                    </group>
+
+                    <!-- Lịch sử escalate -->
+                    <notebook>
+                        <page string="Lịch sử chuyển tầng"
+                              invisible="not escalation_history_ids">
+                            <field name="escalation_history_ids" readonly="1">
+                                <tree create="false" delete="false" editable="false">
+                                    <field name="escalated_at" string="Thời điểm"/>
+                                    <field name="escalated_by" string="Người chuyển"/>
+                                    <field name="from_role"    string="Từ tầng"/>
+                                    <field name="to_role"      string="Lên tầng"/>
+                                    <field name="reason"       string="Lý do"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════
+         LIST VIEW
+    ══════════════════════════════════════════════════════════ -->
+    <record id="view_octa_approval_list" model="ir.ui.view">
+        <field name="name">octa.approval.tree</field>
+        <field name="model">octa.approval</field>
+        <field name="arch" type="xml">
+            <tree string="Phiếu phê duyệt"
+                  decoration-success="state == 'approved'"
+                  decoration-danger="state == 'rejected'"
+                  decoration-warning="state == 'pending' and amount_vs_limit > 0"
+                  decoration-muted="state in ['cancelled']">
+                <field name="name"/>
+                <field name="approval_type"/>
+                <field name="scope"/>
+                <field name="requester_id"/>
+                <field name="amount"
+                       widget="monetary"
+                       options="{'currency_field': false}"/>
+                <field name="current_approver_role"/>
+                <field name="state"/>
+                <field name="create_date"/>
+                <field name="amount_vs_limit" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════
+         SEARCH VIEW
+    ══════════════════════════════════════════════════════════ -->
+    <record id="view_octa_approval_search" model="ir.ui.view">
+        <field name="name">octa.approval.search</field>
+        <field name="model">octa.approval</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="requester_id"/>
+                <field name="ticket_id"/>
+                <separator/>
+                <filter name="my_pending" string="Chờ tôi duyệt"
+                        domain="[('state','=','pending')]"/>
+                <filter name="draft"    string="Nháp"    domain="[('state','=','draft')]"/>
+                <filter name="approved" string="Đã duyệt" domain="[('state','=','approved')]"/>
+                <filter name="rejected" string="Từ chối"  domain="[('state','=','rejected')]"/>
+                <separator/>
+                <filter name="refund"  string="Hoàn tiền" domain="[('approval_type','=','refund')]"/>
+                <filter name="gateway" string="Cổng"      domain="[('approval_type','=','gateway')]"/>
+                <filter name="price"   string="Giá/CK"    domain="[('approval_type','=','price')]"/>
+                <group expand="0" string="Nhóm theo">
+                    <filter name="by_type"  string="Loại phiếu" context="{'group_by':'approval_type'}"/>
+                    <filter name="by_state" string="Trạng thái" context="{'group_by':'state'}"/>
+                    <filter name="by_role"  string="Tầng duyệt" context="{'group_by':'current_approver_role'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════
+         ACTIONS
+    ══════════════════════════════════════════════════════════ -->
+    <record id="action_octa_approval_all" model="ir.actions.act_window">
+        <field name="name">Tất cả phiếu phê duyệt</field>
+        <field name="res_model">octa.approval</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_octa_approval_search"/>
+    </record>
+
+    <record id="action_octa_approval_pending" model="ir.actions.act_window">
+        <field name="name">Chờ tôi duyệt</field>
+        <field name="res_model">octa.approval</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state','=','pending')]</field>
+        <field name="search_view_id" ref="view_octa_approval_search"/>
+        <field name="context">{'search_default_my_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Không có phiếu nào đang chờ duyệt
+            </p>
+        </field>
+    </record>
+
+    <record id="action_octa_approval_my" model="ir.actions.act_window">
+        <field name="name">Phiếu của tôi</field>
+        <field name="res_model">octa.approval</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('requester_id','=',uid)]</field>
+        <field name="search_view_id" ref="view_octa_approval_search"/>
+    </record>
+
+</odoo>
