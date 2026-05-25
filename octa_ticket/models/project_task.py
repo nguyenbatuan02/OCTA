@@ -227,6 +227,36 @@ class ProjectTask(models.Model):
         compute='_compute_check_log_count', store=True,
     )
 
+    # ── Bàn giao ca ─────────────────────────────────────────────────
+    shift = fields.Selection([
+        ('morning',   'Ca sáng (08:00–17:00)'),
+        ('afternoon', 'Ca chiều (17:00–20:00)'),
+        ('night',     'Ca tối (20:00–08:00)'),
+    ], string='Ca làm việc', tracking=True,
+        help='Ca làm việc đang xử lý ticket này.',
+    )
+    handover_note = fields.Text(
+        'Nội dung bàn giao',
+        tracking=True,
+        help='Trạng thái hiện tại và việc NV ca sau cần làm tiếp.',
+    )
+    handover_to_id = fields.Many2one(
+        'res.users', 'Bàn giao cho',
+        tracking=True,
+        help='NV ca sau tiếp nhận ticket này.',
+    )
+    handover_by_id = fields.Many2one(
+        'res.users', 'Người bàn giao',
+        readonly=True, tracking=True,
+    )
+    handover_at = fields.Datetime(
+        'Thời điểm bàn giao', readonly=True, tracking=True,
+    )
+    is_handover_pending = fields.Boolean(
+        'Chờ nhận bàn giao', default=False, index=True,
+        help='True khi Lead đã bàn giao nhưng NV ca sau chưa xác nhận.',
+    )
+
     # ── Computed fields ──────────────────────────────────────────────
 
     @api.depends('issue_type_cskh', 'issue_type_ops')
@@ -425,6 +455,62 @@ class ProjectTask(models.Model):
                 'dept':                      self.dept,
             },
         }
+
+    def action_handover(self):
+        """Mở wizard bàn giao ca — Lead/NV bàn giao ticket cho NV ca sau."""
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': f'Bàn giao ca: {self.name}',
+            'res_model': 'ticket.handover.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_task_id':      self.id,
+                'default_handover_note': self.handover_note or '',
+                'default_shift':        self.shift or '',
+            },
+        }
+
+    def action_confirm_handover(self):
+        """NV ca sau bam xac nhan nhan ban giao."""
+        self.ensure_one()
+        user = self.env.user
+        if self.handover_to_id and self.handover_to_id.id != user.id:
+            raise UserError(
+                'Chi co %s moi co the nhan ban giao ticket nay.' % self.handover_to_id.name
+            )
+        if user not in self.user_ids:
+            self.write({'user_ids': [(4, user.id)]})
+        self.write({'is_handover_pending': False})
+        now_str = fields.Datetime.now().strftime('%H:%M %d/%m/%Y')
+        self.message_post(
+            body=(
+                '<b>%s</b> da xac nhan nhan ban giao ca.<br/>'
+                'Thoi diem: %s' % (user.name, now_str)
+            ),
+            subtype_xmlid='mail.mt_note',
+        )
+        by_name = self.handover_by_id.name if self.handover_by_id else ''
+        self.env['octa.audit.log'].log_action(
+            action_type='write',
+            object_model=self._name,
+            object_id=self.id,
+            object_name=self.name,
+            new_value='Nhan ban giao tu: %s' % by_name,
+            scope_tag=self.scope or 'bigtel',
+        )
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Da nhan ban giao',
+                'message': 'Ban da nhan ticket "%s" tu ca truoc.' % self.name,
+                'type': 'success',
+                'sticky': False,
+            },
+        }
+
 
     def _reset_checklist(self):
         """Reset tất cả checklist về chưa làm."""

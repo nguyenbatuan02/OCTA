@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ticket_handover_wizard_form" model="ir.ui.view">
+        <field name="name">ticket.handover.wizard.form</field>
+        <field name="model">ticket.handover.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Bàn giao ca">
+                <sheet>
+                    <!-- Thông tin ticket đang bàn giao -->
+                    <div class="alert alert-info" role="alert">
+                        <strong>Ticket:</strong>
+                        <field name="task_name" readonly="1" nolabel="1"/>
+                        &amp;nbsp;|&amp;nbsp;
+                        <strong>Tiến độ checklist:</strong>
+                        <field name="checklist_progress" readonly="1" nolabel="1"/>%
+                        <span invisible="not sla_deadline">
+                            &amp;nbsp;|&amp;nbsp;
+                            <strong>SLA deadline:</strong>
+                            <field name="sla_deadline" readonly="1" nolabel="1"/>
+                        </span>
+                    </div>
+
+                    <group>
+                        <group string="Thông tin bàn giao">
+                            <field name="shift"          string="Ca hiện tại *"/>
+                            <field name="handover_to_id" string="Bàn giao cho *"/>
+                        </group>
+                    </group>
+
+                    <group string="Nội dung bàn giao *">
+                        <field name="handover_note" nolabel="1"
+                               style="min-height: 120px"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm"
+                            string="✓ Xác nhận bàn giao"
+                            type="object"
+                            class="btn-primary"/>
+                    <button string="Huỷ" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action cho menu Lead xem tất cả ticket cần bàn giao -->
+    <record id="action_ticket_handover_pending" model="ir.actions.act_window">
+        <field name="name">Ticket chờ bàn giao</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('is_handover_pending', '=', True)]</field>
+        <field name="context">{'search_default_is_handover_pending': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Không có ticket nào đang chờ bàn giao ca
+            </p>
+        </field>
+    </record>
+
+</odoo>

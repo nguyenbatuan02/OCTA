@@ -63,4 +63,11 @@
               groups="octa_base.group_lead"
               sequence="50"/>
 
+    <menuitem id="menu_octa_ticket_handover"
+          name="Bàn giao ca"
+          parent="menu_octa_ticket_root"
+          action="action_ticket_handover_pending"
+          groups="octa_base.group_lead"
+          sequence="47"/>
+
 </odoo>

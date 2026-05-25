@@ -23,6 +23,7 @@
 
         'wizards/ticket_import_wizard_views.xml',
         'wizards/ticket_check_log_wizard_views.xml',
+        'wizards/ticket_handover_wizard_views.xml',
 
         'views/menu.xml',
     ],
