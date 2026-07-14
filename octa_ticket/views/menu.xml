@@ -1,73 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <menuitem id="menu_octa_ticket_root"
-              name="Octa"
-              sequence="50"
-              groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"/>
+  <menuitem id="menu_octa_ticket_root"
+            name="Octa"
+            sequence="50"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"/>
 
-   
-    <menuitem id="menu_octa_ticket_all"
-              name="Tất cả Tickets"
-              parent="menu_octa_ticket_root"
-              action="action_octa_ticket_all"
-              groups="octa_base.group_lead"
-              sequence="5"/>
+  <!-- Tất cả Tickets — ai cũng thấy -->
+  <menuitem id="menu_octa_ticket_all"
+            name="Tất cả Tickets"
+            parent="menu_octa_ticket_root"
+            action="action_octa_ticket_all"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+            sequence="5"/>
 
-    
-    <menuitem id="menu_octa_cskh_root"
-              name="Chăm sóc khách hàng"
-              parent="menu_octa_ticket_root"
-              groups="octa_base.group_octa_cskh"
-              sequence="10"/>
+  <!-- Submenu con: Lead + CSKH thấy -->
+  <menuitem id="menu_octa_ticket_cskh"
+            name="Chăm sóc khách hàng"
+            parent="menu_octa_ticket_all"
+            action="action_octa_ticket_cskh"
+            groups="octa_base.group_octa_cskh"
+            sequence="10"/>
 
-    <menuitem id="menu_octa_ticket_cskh"
-              name="Ticket CSKH"
-              parent="menu_octa_cskh_root"
-              action="action_octa_ticket_cskh"
-              groups="octa_base.group_octa_cskh"
-              sequence="10"/>
+  <!-- Submenu con: Lead + Ops thấy -->
+  <menuitem id="menu_octa_ticket_ops"
+            name="Vận hành thương mại"
+            parent="menu_octa_ticket_all"
+            action="action_octa_ticket_ops"
+            groups="octa_base.group_octa_ops"
+            sequence="20"/>
 
-    <menuitem id="menu_octa_ops_root"
-              name="Vận hành thương mại"
-              parent="menu_octa_ticket_root"
-              groups="octa_base.group_octa_ops"
-              sequence="20"/>
+  <!-- Bàn giao ca -->
+  <menuitem id="menu_octa_handover_root"
+            name="Bàn giao ca"
+            parent="menu_octa_ticket_root"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+            sequence="30"/>
 
-    <menuitem id="menu_octa_ticket_ops"
-              name="Ticket Vận hành"
-              parent="menu_octa_ops_root"
-              action="action_octa_ticket_ops"
-              groups="octa_base.group_octa_ops"
-              sequence="10"/>
+  <menuitem id="menu_my_handover_tickets"
+            name="Ticket được bàn giao cho tôi"
+            parent="menu_octa_handover_root"
+            action="octa_ticket.action_my_handover_tickets"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+            sequence="10"/>
 
-    <menuitem id="menu_octa_ticket_overdue"
-              name="Quá SLA"
-              parent="menu_octa_ticket_root"
-              action="action_octa_ticket_overdue"
-              groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
-              sequence="40"/>
+  <menuitem id="menu_handover_pending_lead"
+            name="Theo dõi bàn giao ca"
+            parent="menu_octa_handover_root"
+            action="octa_ticket.action_octa_ticket_handover_pending"
+            groups="octa_base.group_lead"
+            sequence="20"/>
 
-    <menuitem id="menu_octa_ticket_waiting"
-              name="Chờ phối hợp"
-              parent="menu_octa_ticket_root"
-              action="action_octa_ticket_waiting"
-              groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
-              sequence="45"/>
+  <menuitem id="menu_octa_ticket_overdue"
+            name="Quá SLA"
+            parent="menu_octa_ticket_root"
+            action="action_octa_ticket_overdue"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+            sequence="40"/>
 
- 
-    <menuitem id="menu_octa_ticket_import"
-              name="Import từ Excel"
-              parent="menu_octa_ticket_root"
-              action="action_ticket_import_wizard"
-              groups="octa_base.group_lead"
-              sequence="50"/>
+  <menuitem id="menu_octa_ticket_waiting"
+            name="Chờ phối hợp"
+            parent="menu_octa_ticket_root"
+            action="action_octa_ticket_waiting"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+            sequence="45"/>
 
-    <menuitem id="menu_octa_ticket_handover"
-          name="Bàn giao ca"
-          parent="menu_octa_ticket_root"
-          action="action_ticket_handover_pending"
-          groups="octa_base.group_lead"
-          sequence="47"/>
+  <menuitem id="menu_octa_ticket_import"
+            name="Import từ Excel"
+            parent="menu_octa_ticket_root"
+            action="action_ticket_import_wizard"
+            groups="octa_base.group_lead"
+            sequence="50"/>
 
 </odoo>

@@ -15,3 +15,4 @@ access_ticket_import_wizard_cskh,ticket.import.wizard cskh,model_ticket_import_w
 access_ticket_import_wizard_ops,ticket.import.wizard ops,model_ticket_import_wizard,octa_base.group_octa_ops,1,1,1,1
 access_ticket_check_log_wizard_cskh,ticket.check.log.wizard cskh,model_ticket_check_log_wizard,octa_base.group_octa_cskh,1,1,1,1
 access_ticket_check_log_wizard_ops,ticket.check.log.wizard ops,model_ticket_check_log_wizard,octa_base.group_octa_ops,1,1,1,1
+access_ticket_handover_wizard_lead,ticket.handover.wizard lead,model_ticket_handover_wizard,octa_base.group_lead,1,1,1,1

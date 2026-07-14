@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+
+  <!--
+    Template cho HandoverNotificationDialog
+    Hiện khi NV ca sau vừa login và có ticket được bàn giao
+  -->
+  <t t-name="octa_ticket.HandoverNotificationDialog">
+    <Dialog title="'📋 Bàn giao ca'" size="'md'">
+
+      <div class="p-3">
+
+        <!-- Info banner -->
+        <div class="alert alert-warning d-flex align-items-start gap-2 mb-3" role="alert">
+          <i class="fa fa-exchange fa-lg mt-1"/>
+          <div>
+            <strong><t t-esc="props.fromUser"/></strong>
+            đã bàn giao
+            <strong><t t-esc="props.count"/> ticket</strong>
+            cho bạn
+            (<t t-esc="props.shift"/>).
+          </div>
+        </div>
+
+        <!-- Hướng dẫn -->
+        <p class="text-muted mb-0">
+          Bấm <strong>Xác nhận nhận ca</strong> để tiếp nhận toàn bộ ticket
+          và bắt đầu ca làm việc.
+          <br/>
+          Bấm <strong>Để sau</strong> để xác nhận sau tại menu
+          <em>"Ticket được bàn giao cho tôi"</em>.
+        </p>
+
+      </div>
+
+      <!-- Footer buttons -->
+      <t t-set-slot="footer">
+        <button class="btn btn-success"
+                t-on-click="onClickConfirm"
+                t-att-disabled="state.loading">
+          <t t-if="state.loading">
+            <i class="fa fa-spinner fa-spin me-1"/>
+            Đang xác nhận...
+          </t>
+          <t t-else="">
+            ✅ Xác nhận nhận ca (<t t-esc="props.count"/> ticket)
+          </t>
+        </button>
+        <button class="btn btn-secondary"
+                t-on-click="onClickLater"
+                t-att-disabled="state.loading">
+          Để sau
+        </button>
+      </t>
+
+    </Dialog>
+  </t>
+
+</templates>

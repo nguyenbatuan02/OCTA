@@ -30,6 +30,8 @@
     'assets': {
         'web.assets_backend': [
             'octa_ticket/static/src/js/check_warning.js',
+            'octa_ticket/static/src/js/handover_popup.js',   
+            'octa_ticket/static/src/xml/handover_popup.xml',
         ],
     },
     'installable': True,

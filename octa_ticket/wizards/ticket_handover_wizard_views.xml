@@ -1,61 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="view_ticket_handover_wizard_form" model="ir.ui.view">
-        <field name="name">ticket.handover.wizard.form</field>
-        <field name="model">ticket.handover.wizard</field>
-        <field name="arch" type="xml">
-            <form string="Bàn giao ca">
-                <sheet>
-                    <!-- Thông tin ticket đang bàn giao -->
-                    <div class="alert alert-info" role="alert">
-                        <strong>Ticket:</strong>
-                        <field name="task_name" readonly="1" nolabel="1"/>
-                        &amp;nbsp;|&amp;nbsp;
-                        <strong>Tiến độ checklist:</strong>
-                        <field name="checklist_progress" readonly="1" nolabel="1"/>%
-                        <span invisible="not sla_deadline">
-                            &amp;nbsp;|&amp;nbsp;
-                            <strong>SLA deadline:</strong>
-                            <field name="sla_deadline" readonly="1" nolabel="1"/>
-                        </span>
-                    </div>
+  <!-- ============================================================
+       WIZARD FORM — Bàn giao ca (bulk từ list view)
+  ============================================================ -->
+  <record id="view_ticket_handover_wizard_form" model="ir.ui.view">
+    <field name="name">ticket.handover.wizard.form</field>
+    <field name="model">ticket.handover.wizard</field>
+    <field name="arch" type="xml">
+      <form string="Bàn giao ca">
+        <sheet>
 
-                    <group>
-                        <group string="Thông tin bàn giao">
-                            <field name="shift"          string="Ca hiện tại *"/>
-                            <field name="handover_to_id" string="Bàn giao cho *"/>
-                        </group>
-                    </group>
+          <!-- Summary header -->
+          <div class="alert alert-info mb-3" role="alert">
+            <i class="fa fa-exchange me-2"/>
+            Đang bàn giao <strong><field name="task_count" nolabel="1"/></strong>
+            ticket cho nhân viên ca sau.
+          </div>
 
-                    <group string="Nội dung bàn giao *">
-                        <field name="handover_note" nolabel="1"
-                               style="min-height: 120px"/>
-                    </group>
-                </sheet>
-                <footer>
-                    <button name="action_confirm"
-                            string="✓ Xác nhận bàn giao"
-                            type="object"
-                            class="btn-primary"/>
-                    <button string="Huỷ" class="btn-secondary" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
+          <!-- Thông tin bàn giao -->
+          <group string="Thông tin bàn giao">
+            <group>
+              <field name="handover_to_id"
+                     options="{'no_create': True, 'no_open': True}"
+                     placeholder="Chọn nhân viên ca sau..."/>
+              <field name="shift"/>
+            </group>
+            <group>
+              <field name="handover_note"
+                     placeholder="Tóm tắt tình hình hiện tại, việc cần tiếp tục..."/>
+            </group>
+          </group>
 
-    <!-- Action cho menu Lead xem tất cả ticket cần bàn giao -->
-    <record id="action_ticket_handover_pending" model="ir.actions.act_window">
-        <field name="name">Ticket chờ bàn giao</field>
-        <field name="res_model">project.task</field>
-        <field name="view_mode">list,form</field>
-        <field name="domain">[('is_handover_pending', '=', True)]</field>
-        <field name="context">{'search_default_is_handover_pending': 1}</field>
-        <field name="help" type="html">
-            <p class="o_view_nocontent_smiling_face">
-                Không có ticket nào đang chờ bàn giao ca
-            </p>
-        </field>
-    </record>
+          <!-- Danh sách ticket sẽ được bàn giao -->
+          <group string="Danh sách ticket bàn giao">
+            <field name="task_ids" nolabel="1" widget="many2many_tags"
+                   options="{'no_create': True, 'no_open': True}"/>
+          </group>
+
+          <!-- Preview bảng ticket -->
+          <field name="task_summary" nolabel="1" widget="html"
+                 class="mt-2"/>
+
+        </sheet>
+        <footer>
+          <button string="✅ Xác nhận bàn giao"
+                  name="action_confirm"
+                  type="object"
+                  class="btn-primary"
+                  data-hotkey="q"/>
+          <button string="Huỷ"
+                  class="btn-secondary"
+                  special="cancel"
+                  data-hotkey="x"/>
+        </footer>
+      </form>
+    </field>
+  </record>
+
+  <!-- ============================================================
+       SERVER ACTION — trigger từ list view selection
+       Lead chọn nhiều ticket → Action "Bàn giao ca"
+  ============================================================ -->
+  <record id="action_handover_wizard_server" model="ir.actions.server">
+    <field name="name">Bàn giao ca</field>
+    <field name="model_id" ref="project.model_project_task"/>
+    <field name="binding_model_id" ref="project.model_project_task"/>
+    <field name="binding_view_types">list</field>
+    <field name="groups_id" eval="[(4, ref('octa_base.group_lead'))]"/>
+    <field name="state">code</field>
+    <field name="code">
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'Bàn giao ca',
+    'res_model': 'ticket.handover.wizard',
+    'view_mode': 'form',
+    'target': 'new',
+    'context': {
+        'active_ids': env.context.get('active_ids', []),
+        'active_model': 'project.task',
+    },
+}
+    </field>
+  </record>
+
+  <!-- ============================================================
+       ACTION — Màn hình "Ticket được bàn giao cho tôi"
+       NV ca sau vào menu này để xem và xác nhận nhận ca
+  ============================================================ -->
+  <record id="action_my_handover_tickets" model="ir.actions.act_window">
+    <field name="name">Ticket được bàn giao cho tôi</field>
+    <field name="res_model">project.task</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[
+      ('is_handover_pending', '=', True),
+      ('handover_to_id', '=', uid)
+    ]</field>
+    <field name="view_ids" eval="[
+      (5, 0, 0),
+      (0, 0, {'view_mode': 'tree', 'view_id': ref('octa_ticket.view_octa_ticket_list')}),
+      (0, 0, {'view_mode': 'form'}),
+    ]"/>
+    <field name="context">{
+      'search_default_all_tasks': 1,
+    }</field>
+    <field name="help" type="html">
+      <p class="o_view_nocontent_smiling_face">
+        Không có ticket nào đang chờ bạn nhận bàn giao
+      </p>
+      <p>Lead sẽ bàn giao ticket khi kết thúc ca.</p>
+    </field>
+  </record>
 
 </odoo>

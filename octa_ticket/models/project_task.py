@@ -110,8 +110,7 @@ class ProjectTask(models.Model):
     _inherit = 'project.task'
 
     # ── Phân loại issue ─────────────────────────────────────────────
-    # FIX: bỏ field 'dept' — đã định nghĩa ở octa_project
-    # FIX: bỏ field 'date_closed' — đã định nghĩa ở octa_project
+    # NOTE: 'dept' và 'date_closed' đã định nghĩa ở octa_project — không khai báo lại
 
     issue_type_cskh = fields.Selection(
         CSKH_ISSUE_TYPES, string='Loại sự cố (CSKH)', tracking=True,
@@ -120,7 +119,6 @@ class ProjectTask(models.Model):
         VH_ISSUE_TYPES, string='Loại đầu việc (Vận hành)', tracking=True,
     )
 
-    # FIX: _compute_issue_type — thêm guard khi cả 2 có value
     issue_type = fields.Selection(
         CSKH_ISSUE_TYPES + VH_ISSUE_TYPES,
         string='Mã loại việc',
@@ -147,8 +145,7 @@ class ProjectTask(models.Model):
     is_overdue_sla  = fields.Boolean(
         'Quá SLA', compute='_compute_overdue_sla', store=True,
     )
-    # Cả 2 field check_status dùng chung 1 compute _compute_check_status
-    # vì phụ thuộc cùng field next_check_time — tránh query 2 lần
+    # Cả 2 field dùng chung 1 compute — tránh query next_check_time 2 lần
     is_check_warning = fields.Boolean(
         'Sắp đến hạn kiểm tra',
         compute='_compute_check_status',
@@ -236,25 +233,35 @@ class ProjectTask(models.Model):
         help='Ca làm việc đang xử lý ticket này.',
     )
     handover_note = fields.Text(
-        'Nội dung bàn giao',
-        tracking=True,
+        'Nội dung bàn giao', tracking=True,
         help='Trạng thái hiện tại và việc NV ca sau cần làm tiếp.',
     )
     handover_to_id = fields.Many2one(
-        'res.users', 'Bàn giao cho',
-        tracking=True,
+        'res.users', 'Bàn giao cho', tracking=True,
         help='NV ca sau tiếp nhận ticket này.',
     )
     handover_by_id = fields.Many2one(
-        'res.users', 'Người bàn giao',
-        readonly=True, tracking=True,
+        'res.users', 'Người bàn giao', readonly=True, tracking=True,
     )
     handover_at = fields.Datetime(
         'Thời điểm bàn giao', readonly=True, tracking=True,
     )
+    handover_received_at = fields.Datetime(
+        'Thời điểm nhận bàn giao', readonly=True, tracking=True, copy=False,
+    )
     is_handover_pending = fields.Boolean(
-        'Chờ nhận bàn giao', default=False, index=True,
+        'Chờ nhận bàn giao', default=False, index=True, tracking=True,
         help='True khi Lead đã bàn giao nhưng NV ca sau chưa xác nhận.',
+    )
+
+    # is_ticket_closed — computed boolean dùng trong invisible của <header> button
+    # Odoo 17: project.task.type dùng field 'fold', KHÔNG có 'is_closed'
+    # Không dùng stage_id.fold trực tiếp trong XML vì Odoo 17 không resolve
+    # related 2 cấp (field.subfield) trong invisible attr trên <header>
+    is_ticket_closed = fields.Boolean(
+        'Ticket đã đóng',
+        compute='_compute_is_ticket_closed',
+        store=False,
     )
 
     # ── Computed fields ──────────────────────────────────────────────
@@ -262,11 +269,8 @@ class ProjectTask(models.Model):
     @api.depends('issue_type_cskh', 'issue_type_ops')
     def _compute_issue_type(self):
         for t in self:
-            # FIX: guard khi cả 2 có value — ưu tiên cskh
-            # Không nên xảy ra trong thực tế (onchange reset cái kia)
-            # nhưng data cũ hoặc import có thể có cả 2
+            # Guard khi cả 2 có value (data import lỗi) — ưu tiên cskh
             if t.issue_type_cskh and t.issue_type_ops:
-                # Log warning để phát hiện data lỗi
                 t.issue_type = t.issue_type_cskh
             else:
                 t.issue_type = t.issue_type_cskh or t.issue_type_ops or False
@@ -322,6 +326,16 @@ class ProjectTask(models.Model):
                 if t.linked_ticket_id else True
             )
 
+    @api.depends('stage_id', 'stage_id.fold')
+    def _compute_is_ticket_closed(self):
+        """
+        Odoo 17: project.task.type dùng 'fold' (KHÔNG có 'is_closed').
+        stage.fold=True ↔ ticket đã đóng/hoàn thành.
+        store=False: chỉ dùng cho UI invisible trong <header>.
+        """
+        for t in self:
+            t.is_ticket_closed = bool(t.stage_id and t.stage_id.fold)
+
     # ── Onchange ────────────────────────────────────────────────────
 
     @api.onchange('dept')
@@ -369,7 +383,6 @@ class ProjectTask(models.Model):
         res = super().default_get(fields_list)
         if 'dept' in fields_list:
             user = self.env.user
-            # FIX: ref đúng groups octa_base
             if user.has_group('octa_base.group_lead'):
                 pass  # Lead tự chọn, không set mặc định
             elif user.has_group('octa_base.group_octa_ops'):
@@ -433,7 +446,7 @@ class ProjectTask(models.Model):
                     for t in templates
                 ]
 
-        # NOTE: bỏ logic date_closed ở đây — đã xử lý ở octa_project.write()
+        # NOTE: date_closed xử lý ở octa_project.write() — không duplicate ở đây
         return super().write(vals)
 
     # ── Actions ─────────────────────────────────────────────────────
@@ -457,7 +470,13 @@ class ProjectTask(models.Model):
         }
 
     def action_handover(self):
-        """Mở wizard bàn giao ca — Lead/NV bàn giao ticket cho NV ca sau."""
+        """
+        Mở wizard bàn giao ca.
+
+        Điều kiện hiển thị button (kiểm soát ở XML):
+        - is_ticket_closed = False  (ticket chưa đóng)
+        - is_handover_pending = False  (chưa có bàn giao đang chờ)
+        """
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
@@ -466,51 +485,126 @@ class ProjectTask(models.Model):
             'view_mode': 'form',
             'target': 'new',
             'context': {
-                'default_task_id':      self.id,
+                'default_task_id':       self.id,
                 'default_handover_note': self.handover_note or '',
-                'default_shift':        self.shift or '',
+                'default_shift':         self.shift or '',
             },
         }
 
     def action_confirm_handover(self):
-        """NV ca sau bam xac nhan nhan ban giao."""
+        """
+        NV ca sau xác nhận nhận bàn giao từ form view của 1 ticket.
+
+        Điều kiện hiển thị (XML): is_handover_pending = True.
+        Server validate: chỉ handover_to_id mới được xác nhận.
+
+        Delegate xuống _do_confirm_handover để tránh duplicate logic
+        với action_confirm_handover_bulk.
+        """
         self.ensure_one()
         user = self.env.user
+
+        if not self.is_handover_pending:
+            raise UserError('Ticket này không có bàn giao ca đang chờ xác nhận.')
+
         if self.handover_to_id and self.handover_to_id.id != user.id:
             raise UserError(
-                'Chi co %s moi co the nhan ban giao ticket nay.' % self.handover_to_id.name
+                'Chỉ có %s mới có thể xác nhận nhận bàn giao ticket này.'
+                % self.handover_to_id.name
             )
-        if user not in self.user_ids:
-            self.write({'user_ids': [(4, user.id)]})
-        self.write({'is_handover_pending': False})
-        now_str = fields.Datetime.now().strftime('%H:%M %d/%m/%Y')
+
+        self._do_confirm_handover()
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title':   '✅ Đã nhận bàn giao',
+                'message': 'Bạn đã nhận ticket "%s" từ ca trước.' % self.name,
+                'type':    'success',
+                'sticky':  False,
+            },
+        }
+
+    def action_confirm_handover_bulk(self):
+        """
+        Bulk confirm — NV xác nhận nhận tất cả ticket được bàn giao.
+
+        Gọi từ:
+        1. Popup dialog (bus.bus) khi vừa login
+        2. Button "Xác nhận nhận tất cả" trong list view
+           action_my_handover_tickets
+
+        self là recordset nhiều ticket — filter chỉ lấy ticket
+        is_handover_pending=True và handover_to_id=user hiện tại.
+        """
+        user = self.env.user
+
+        # Chỉ xác nhận ticket của chính mình
+        my_tasks = self.filtered(
+            lambda t: t.is_handover_pending
+            and (not t.handover_to_id or t.handover_to_id.id == user.id)
+        )
+
+        if not my_tasks:
+            raise UserError(
+                'Không có ticket nào được bàn giao cho bạn trong danh sách đã chọn.'
+            )
+
+        for task in my_tasks:
+            task._do_confirm_handover()
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title':   '✅ Đã nhận bàn giao',
+                'message': 'Bạn đã nhận %d ticket từ ca trước.' % len(my_tasks),
+                'type':    'success',
+                'sticky':  False,
+            },
+        }
+
+    def _do_confirm_handover(self):
+        """
+        Core logic xác nhận nhận bàn giao — dùng chung cho
+        action_confirm_handover (1 ticket) và action_confirm_handover_bulk (nhiều).
+
+        Không validate user ở đây — caller tự validate trước.
+        """
+        self.ensure_one()
+        user = self.env.user
+        now = fields.Datetime.now()
+
+        self.write({
+            'is_handover_pending':  False,
+            'handover_received_at': now,
+        })
+
         self.message_post(
             body=(
-                '<b>%s</b> da xac nhan nhan ban giao ca.<br/>'
-                'Thoi diem: %s' % (user.name, now_str)
+                '<b>✅ Đã xác nhận nhận bàn giao ca</b><br/>'
+                'Người nhận: <b>%s</b><br/>'
+                'Bàn giao từ: <b>%s</b><br/>'
+                'Thời điểm nhận ca: %s'
+            ) % (
+                user.name,
+                self.handover_by_id.name if self.handover_by_id else '(không rõ)',
+                now.strftime('%H:%M %d/%m/%Y'),
             ),
             subtype_xmlid='mail.mt_note',
         )
-        by_name = self.handover_by_id.name if self.handover_by_id else ''
+
         self.env['octa.audit.log'].log_action(
             action_type='write',
             object_model=self._name,
             object_id=self.id,
             object_name=self.name,
-            new_value='Nhan ban giao tu: %s' % by_name,
+            old_value='is_handover_pending=True',
+            new_value='is_handover_pending=False, received_by=%s' % user.name,
+            reason='Xác nhận nhận bàn giao ca',
             scope_tag=self.scope or 'bigtel',
         )
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'Da nhan ban giao',
-                'message': 'Ban da nhan ticket "%s" tu ca truoc.' % self.name,
-                'type': 'success',
-                'sticky': False,
-            },
-        }
-
 
     def _reset_checklist(self):
         """Reset tất cả checklist về chưa làm."""
@@ -538,21 +632,16 @@ class ProjectTask(models.Model):
         """
         Chạy mỗi phút — cảnh báo NV khi checklist sắp đến giờ (≤5ph)
         hoặc đã quá giờ.
-
-        FIX: warn_at = now + 5ph (cảnh báo trước 5ph) — version cũ đúng.
-        Overdue = next_check_time < now (đã qua).
         """
         now = fields.Datetime.now()
         warn_at = now + timedelta(minutes=5)
 
-        # Sắp đến giờ: next_check_time trong khoảng [now, now+5ph]
         warning_tasks = self.search([
             ('ticket_type', 'in', ['periodic', 'shift']),
             ('next_check_time', '>=', now),
             ('next_check_time', '<=', warn_at),
             ('stage_id.fold', '=', False),
         ])
-        # Đã quá giờ: next_check_time < now
         overdue_tasks = self.search([
             ('ticket_type', 'in', ['periodic', 'shift']),
             ('next_check_time', '<', now),
