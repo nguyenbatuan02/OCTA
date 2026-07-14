@@ -13,8 +13,8 @@ Tất cả tài liệu đặt trong thư mục `docs/`:
 | `docs/ppkd.md` | Mô tả công việc Phó phòng Kinh doanh |
 | `docs/tdabg.md` | Mô tả công việc Trưởng dự án Bigtel |
 | `docs/tpkd.md` | Mô tả công việc Trưởng phòng Kinh doanh |
-| `docs/quy_trinh_cskh.md` | Quy trình CS01–CS10 (thẻ lỗi, topup, cổng...) |
-| `docs/quy_trinh_vh.md` | Quy trình VH01–VH08 (mua hàng, cổng API...) |
+| `docs/quytrinh_cskh.md` | Quy trình CS01–CS10 (thẻ lỗi, topup, cổng...) |
+| `docs/quytrinh_vh.md` | Quy trình VH01–VH08 (mua hàng, cổng API...) |
 | `docs/odoo_ppkd.md` | Yêu cầu cấu hình Odoo cho PPKD |
 | `docs/odoo_tdabg.md` | Yêu cầu cấu hình Odoo cho TDABG |
 | `docs/odoo_tpkd.md` | Yêu cầu cấu hình Odoo cho TPKD |
