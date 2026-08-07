@@ -128,5 +128,40 @@
         ]"/>
     </record>
 
+    <!-- ══════════════════════════════════════════════════════════
+         TẦNG 6 — GIÁM ĐỐC / HĐQT (GĐ)
+         Tầng phê duyệt cuối cùng khi vượt hạn mức TPKD.
+         Kế thừa TPKD → thấy toàn bộ dữ liệu.
+         Nhận phiếu escalate lên 'gd' (L5).
+    ══════════════════════════════════════════════════════════ -->
+
+    <record id="group_gd" model="res.groups">
+        <field name="name">Giám đốc / HĐQT</field>
+        <field name="category_id" ref="module_category_octa"/>
+        <field name="comment">
+            Tầng phê duyệt cuối cùng (L5).
+            Nhận phiếu escalate khi vượt hạn mức TPKD.
+            Đóng case ranh đỏ trọng yếu.
+        </field>
+        <field name="implied_ids" eval="[
+            (4, ref('group_tpkd')),
+        ]"/>
+    </record>
+
+    <!-- ══════════════════════════════════════════════════════════
+         VAI TRÒ CHỨC NĂNG — KẾ TOÁN TRƯỞNG (KTT)
+         Không thuộc chuỗi KD. Dùng cho Vòng đời 6:
+         duyệt số liệu ≤ hạn mức KTT + xác nhận đối soát.
+    ══════════════════════════════════════════════════════════ -->
+
+    <record id="group_ktt" model="res.groups">
+        <field name="name">Kế toán trưởng</field>
+        <field name="category_id" ref="module_category_octa"/>
+        <field name="comment">
+            Vai trò chức năng kế toán (không thuộc chuỗi KD).
+            Vòng đời 6: duyệt phương án ≤ hạn mức KTT, xác nhận đối soát ticket.
+        </field>
+    </record>
+
 </data>
 </odoo>

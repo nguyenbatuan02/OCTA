@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_biz_dashboard_lead,octa.biz.dashboard lead,model_octa_biz_dashboard,octa_base.group_lead,1,0,0,0

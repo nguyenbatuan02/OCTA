@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vd6_team_cskh,octa.vd6.team cskh,model_octa_vd6_team,octa_base.group_octa_cskh,1,0,0,0
+access_vd6_team_ops,octa.vd6.team ops,model_octa_vd6_team,octa_base.group_octa_ops,1,0,0,0
+access_vd6_team_tpkd,octa.vd6.team tpkd,model_octa_vd6_team,octa_base.group_tpkd,1,1,1,1
+access_vd6_rule_cskh,octa.vd6.assign.rule cskh,model_octa_vd6_assign_rule,octa_base.group_octa_cskh,1,0,0,0
+access_vd6_rule_ops,octa.vd6.assign.rule ops,model_octa_vd6_assign_rule,octa_base.group_octa_ops,1,0,0,0
+access_vd6_rule_tpkd,octa.vd6.assign.rule tpkd,model_octa_vd6_assign_rule,octa_base.group_tpkd,1,1,1,1
+access_vd6_apilog_tdabg,octa.vd6.api.log tdabg,model_octa_vd6_api_log,octa_base.group_tdabg,1,0,0,0
+access_task_ktt,project.task ktt,project.model_project_task,octa_base.group_ktt,1,1,0,0
+access_vd6_team_ktt,octa.vd6.team ktt,model_octa_vd6_team,octa_base.group_ktt,1,0,0,0
+access_vd6_rule_ktt,octa.vd6.assign.rule ktt,model_octa_vd6_assign_rule,octa_base.group_ktt,1,0,0,0

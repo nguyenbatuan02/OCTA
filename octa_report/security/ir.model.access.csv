@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_report_catalog_cskh,octa.report.catalog cskh,model_octa_report_catalog,octa_base.group_octa_cskh,1,0,0,0
+access_report_catalog_ops,octa.report.catalog ops,model_octa_report_catalog,octa_base.group_octa_ops,1,0,0,0
+access_report_catalog_lead,octa.report.catalog lead,model_octa_report_catalog,octa_base.group_lead,1,0,0,0
+access_report_catalog_tdabg,octa.report.catalog tdabg,model_octa_report_catalog,octa_base.group_tdabg,1,1,1,1
+access_octa_report_cskh,octa.report cskh,model_octa_report,octa_base.group_octa_cskh,1,1,1,0
+access_octa_report_ops,octa.report ops,model_octa_report,octa_base.group_octa_ops,1,1,1,0
+access_octa_report_lead,octa.report lead,model_octa_report,octa_base.group_lead,1,1,1,1
+access_octa_report_tdabg,octa.report tdabg,model_octa_report,octa_base.group_tdabg,1,1,1,1

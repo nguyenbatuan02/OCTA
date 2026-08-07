@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="action_octa_biz_dashboard" model="ir.actions.client">
+    <field name="name">Điều hành Octa</field>
+    <field name="tag">octa_biz_dashboard</field>
+  </record>
+
+  <menuitem id="menu_octa_biz_dashboard_root"
+            name="Điều hành Octa"
+            sequence="48"
+            groups="octa_base.group_lead"/>
+
+  <menuitem id="menu_octa_biz_dashboard"
+            name="Bảng điều hành"
+            parent="menu_octa_biz_dashboard_root"
+            action="action_octa_biz_dashboard"
+            groups="octa_base.group_lead"
+            sequence="10"/>
+</odoo>

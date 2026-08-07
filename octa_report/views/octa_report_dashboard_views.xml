@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="action_octa_report_dashboard" model="ir.actions.client">
+    <field name="name">Bảng báo cáo</field>
+    <field name="tag">octa_report_dashboard</field>
+  </record>
+</odoo>

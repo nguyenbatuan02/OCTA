@@ -2,7 +2,7 @@
 <odoo>
 
   <menuitem id="menu_octa_ticket_root"
-            name="Octa"
+            name="Octa Ticket"
             sequence="50"
             groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"/>
 

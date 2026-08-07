@@ -25,13 +25,13 @@
                            invisible="action not in ['approve', 'escalate']">
                         <group>
                             <field name="amount"          string="Số tiền đề xuất (VNĐ)"
-                                   widget="monetary" options="{'currency_field': false}"/>
+                                  />
                             <field name="limit_display"   string="Hạn mức tầng này (VNĐ)"
-                                   widget="monetary" options="{'currency_field': false}"/>
+                                  />
                         </group>
                         <group>
                             <field name="amount_vs_limit" string="Chênh lệch (VNĐ)"
-                                   widget="monetary" options="{'currency_field': false}"/>
+                                  />
                         </group>
                     </group>
 
@@ -41,7 +41,7 @@
                         <strong>⚠ Vượt hạn mức!</strong>
                         Số tiền vượt hạn mức
                         <field name="amount_vs_limit" nolabel="1" readonly="1"
-                               widget="monetary" options="{'currency_field': false}"/> VNĐ.
+                              /> VNĐ.
                         Phiếu này cần được chuyển lên tầng trên.
                     </div>
 
@@ -122,9 +122,9 @@
                          invisible="state != 'pending' or amount_vs_limit &lt;= 0">
                         <strong>⚠ Vượt hạn mức tầng này!</strong>
                         Số tiền <b><field name="amount" nolabel="1" readonly="1"
-                               widget="monetary" options="{'currency_field': false}"/> VNĐ</b>
+                              /> VNĐ</b>
                         vượt hạn mức <b><field name="limit_display" nolabel="1" readonly="1"
-                               widget="monetary" options="{'currency_field': false}"/> VNĐ</b>.
+                              /> VNĐ</b>.
                         Nhấn <b>Chuyển tầng trên</b> để tiếp tục.
                     </div>
 
@@ -160,18 +160,14 @@
                         <group string="Số tiền"
                                invisible="approval_type not in ['refund', 'debt']">
                             <field name="amount"
-                                   widget="monetary"
-                                   options="{'currency_field': false}"
                                    readonly="state != 'draft'"/>
                             <field name="limit_display"
-                                   widget="monetary"
-                                   options="{'currency_field': false}"
                                    readonly="1"
+                                   invisible="state == 'draft'"
                                    string="Hạn mức tầng hiện tại"/>
                             <field name="amount_vs_limit"
-                                   widget="monetary"
-                                   options="{'currency_field': false}"
                                    readonly="1"
+                                   invisible="state == 'draft'"
                                    string="Chênh lệch (+ = vượt hạn mức)"/>
                         </group>
                     </group>
@@ -232,8 +228,7 @@
                 <field name="scope"/>
                 <field name="requester_id"/>
                 <field name="amount"
-                       widget="monetary"
-                       options="{'currency_field': false}"/>
+                       />
                 <field name="current_approver_role"/>
                 <field name="state"/>
                 <field name="create_date"/>

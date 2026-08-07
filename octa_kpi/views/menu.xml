@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <menuitem id="menu_octa_kpi_root"
+            name="KPI"
+            sequence="56"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"/>
+
+  <menuitem id="menu_octa_kpi"
+            name="KPI của tôi"
+            parent="menu_octa_kpi_root"
+            action="action_octa_kpi"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+            sequence="10"/>
+
+  <menuitem id="menu_octa_kpi_generate"
+            name="Sinh KPI tháng"
+            parent="menu_octa_kpi_root"
+            action="action_octa_kpi_generate_month"
+            groups="octa_base.group_lead"
+            sequence="20"/>
+
+</odoo>

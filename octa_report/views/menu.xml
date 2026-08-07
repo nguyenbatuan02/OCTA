@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <menuitem id="menu_octa_report_root"
+            name="Báo cáo Octa"
+            sequence="52"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"/>
+
+  <menuitem id="menu_octa_report_dashboard"
+            name="Bảng báo cáo"
+            parent="menu_octa_report_root"
+            action="action_octa_report_dashboard"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+            sequence="5"/>
+
+  <menuitem id="menu_octa_report_list"
+            name="Báo cáo của tôi"
+            parent="menu_octa_report_root"
+            action="action_octa_report"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+            sequence="10"/>
+
+  <menuitem id="menu_octa_report_approve"
+            name="Báo cáo chờ duyệt"
+            parent="menu_octa_report_root"
+            action="action_octa_report_approve"
+            groups="octa_base.group_tdabg"
+            sequence="20"/>
+
+  <menuitem id="menu_octa_report_catalog"
+            name="Danh mục loại báo cáo"
+            parent="menu_octa_report_root"
+            action="action_report_catalog"
+            groups="octa_base.group_lead"
+            sequence="90"/>
+
+</odoo>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+  <t t-name="octa_report.ReportDashboard">
+    <div class="o_action" style="padding:20px; background:#f5f5f5; min-height:100vh;">
+
+      <!-- Hàng thẻ tổng quan -->
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px;">
+        <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #4c9aff; border-radius:8px; padding:16px;">
+          <div style="color:#888; font-size:13px;">Tổng báo cáo</div>
+          <div style="font-size:32px; font-weight:bold;" t-esc="state.data.summary.total || 0"/>
+        </div>
+        <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #ffab00; border-radius:8px; padding:16px; cursor:pointer"
+             t-on-click="() => this.switchTab('draft')">
+          <div style="color:#888; font-size:13px;">Nháp</div>
+          <div style="font-size:32px; font-weight:bold;" t-esc="state.data.summary.draft || 0"/>
+        </div>
+        <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #36b37e; border-radius:8px; padding:16px; cursor:pointer"
+             t-on-click="() => this.switchTab('submitted')">
+          <div style="color:#888; font-size:13px;">Chờ duyệt</div>
+          <div style="font-size:32px; font-weight:bold;" t-esc="state.data.summary.submitted || 0"/>
+        </div>
+        <div style="background:#fff; border:1px solid #ddd; border-top:3px solid #f56565; border-radius:8px; padding:16px; cursor:pointer"
+             t-on-click="() => this.switchTab('overdue')">
+          <div style="color:#888; font-size:13px;">Quá hạn</div>
+          <div style="font-size:32px; font-weight:bold; color:#e53e3e;" t-esc="state.data.summary.overdue || 0"/>
+        </div>
+      </div>
+
+      <!-- Thẻ theo bộ phận -->
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px;">
+        <t t-foreach="state.data.roles" t-as="role" t-key="role.role">
+          <div style="background:#fff; border:1px solid #ddd; border-left:4px solid #6366f1; border-radius:8px; padding:14px; cursor:pointer"
+               t-on-click="() => this.setCatalogRole(role.role)">
+            <div style="font-weight:600; font-size:14px; margin-bottom:6px;" t-esc="role.label"/>
+            <div style="font-size:12px; color:#666;">
+              Tổng: <b t-esc="role.total"/> ·
+              Nháp: <t t-esc="role.draft"/> ·
+              Chờ duyệt: <t t-esc="role.submitted"/>
+            </div>
+            <div t-if="role.overdue" style="font-size:12px; color:#e53e3e; font-weight:600;">
+              ⚠ Quá hạn: <t t-esc="role.overdue"/>
+            </div>
+          </div>
+        </t>
+      </div>
+
+      <!-- Tạo báo cáo nhanh từ danh mục -->
+      <div style="background:#fff; border:1px solid #ddd; border-radius:8px; padding:16px; margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="font-weight:600; font-size:15px;">➕ Tạo báo cáo mới theo loại</div>
+          <div style="display:flex; gap:6px;">
+            <t t-foreach="[['all','Tất cả'],['cskh','CSKH'],['ops','VH'],['lead','Lead'],['tdabg','TDABG']]" t-as="r" t-key="r[0]">
+              <span t-att-style="'padding:4px 10px; border-radius:14px; cursor:pointer; font-size:12px; border:1px solid #ddd; background:' + (state.catalogRole === r[0] ? '#6366f1' : '#fff') + '; color:' + (state.catalogRole === r[0] ? '#fff' : '#555')"
+                    t-on-click="() => this.setCatalogRole(r[0])" t-esc="r[1]"/>
+            </t>
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
+          <t t-foreach="filteredCatalog" t-as="cat" t-key="cat.id">
+            <div style="border:1px solid #eee; border-radius:6px; padding:10px; display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <div style="font-size:13px; font-weight:600;" t-esc="cat.name"/>
+                <div style="font-size:11px; color:#999;">
+                  <t t-esc="cat.role_label"/> · <t t-esc="cat.freq_label"/> · <t t-esc="cat.deadline_note"/>
+                </div>
+              </div>
+              <button class="btn btn-sm btn-primary" style="white-space:nowrap;"
+                      t-on-click="() => this.createReport(cat.id)">Tạo</button>
+            </div>
+          </t>
+        </div>
+      </div>
+
+      <!-- Tabs danh sách -->
+      <div style="display:flex; gap:0; background:#fff; border-bottom:1px solid #ddd;">
+        <t t-foreach="state.tabs" t-as="tab" t-key="tab.key">
+          <div t-att-style="'padding:10px 20px; cursor:pointer; font-size:13px; border-bottom:2px solid ' + (state.activeTab === tab.key ? '#4c6ef5' : 'transparent') + '; color:' + (state.activeTab === tab.key ? '#4c6ef5' : '#666') + '; font-weight:' + (state.activeTab === tab.key ? '600' : '400')"
+               t-on-click="() => this.switchTab(tab.key)">
+            <t t-esc="tab.label"/>
+          </div>
+        </t>
+      </div>
+
+      <!-- Bảng danh sách báo cáo -->
+      <div style="background:#fff;">
+        <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr; padding:10px 16px; background:#f8f9fa; border-bottom:1px solid #eee; font-size:12px; color:#888; font-weight:600;">
+          <div>Tiêu đề</div>
+          <div>Bộ phận / Tần suất</div>
+          <div>Kỳ</div>
+          <div>Hạn nộp</div>
+          <div>Trạng thái</div>
+        </div>
+        <t t-if="state.reports.length === 0">
+          <div style="padding:40px; text-align:center; color:#aaa;">Không có báo cáo nào</div>
+        </t>
+        <t t-foreach="state.reports" t-as="rp" t-key="rp.id">
+          <div style="display:grid; grid-template-columns:2fr 1fr 1fr 1fr 1fr; padding:12px 16px; border-bottom:1px solid #f0f0f0; align-items:center; cursor:pointer;"
+               t-on-click="() => this.openReport(rp.id)">
+            <div style="font-size:14px;">
+              <t t-esc="rp.name"/>
+              <span t-if="rp.is_overdue" style="color:#e53e3e; font-size:11px;"> ⚠ quá hạn</span>
+            </div>
+            <div style="font-size:12px; color:#555;"><t t-esc="rp.role_label"/> · <t t-esc="rp.freq_label"/></div>
+            <div style="font-size:12px; color:#555;" t-esc="rp.period_date"/>
+            <div style="font-size:12px; color:#555;" t-esc="rp.deadline"/>
+            <div>
+              <span t-att-style="'padding:3px 10px; border-radius:4px; font-size:12px; background:' + (rp.state === 'approved' ? '#e6f7ed' : (rp.is_overdue ? '#fef2f2' : '#e3f2fd')) + '; color:' + (rp.state === 'approved' ? '#1e7e46' : (rp.is_overdue ? '#dc2626' : '#1976d2'))"
+                    t-esc="stateLabel(rp.state)"/>
+            </div>
+          </div>
+        </t>
+      </div>
+
+    </div>
+  </t>
+</templates>

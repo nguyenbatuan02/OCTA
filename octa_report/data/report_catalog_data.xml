@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+  <!-- ═══════════ CSKH (quytrinh_cskh + lead_cskh) ═══════════ -->
+  <record id="cat_cskh_shift" model="octa.report.catalog">
+    <field name="code">BC-CSKH-CA</field>
+    <field name="name">Báo cáo ca CSKH</field>
+    <field name="owner_role">cskh</field>
+    <field name="frequency">shift</field>
+    <field name="recipients">Lead ca kế tiếp; Lead CSKH</field>
+    <field name="deadline_note">Cuối ca</field>
+    <field name="sequence">10</field>
+  </record>
+  <record id="cat_cskh_day" model="octa.report.catalog">
+    <field name="code">BC-CSKH-NGAY</field>
+    <field name="name">Báo cáo ngày CSKH</field>
+    <field name="owner_role">cskh</field>
+    <field name="frequency">day</field>
+    <field name="recipients">Lead CSKH; TDA Bigtel</field>
+    <field name="deadline_note">Trước 09:30 ngày làm việc kế tiếp</field>
+    <field name="sequence">20</field>
+  </record>
+  <record id="cat_cskh_adhoc" model="octa.report.catalog">
+    <field name="code">BC-CSKH-DX</field>
+    <field name="name">Báo cáo đột xuất CSKH (sự cố)</field>
+    <field name="owner_role">cskh</field>
+    <field name="frequency">adhoc</field>
+    <field name="recipients">Lead CSKH; TDA Bigtel</field>
+    <field name="deadline_note">Trong 30 phút kể từ khi phát sinh</field>
+    <field name="sequence">30</field>
+  </record>
+
+  <!-- ═══════════ VẬN HÀNH (quytrinh_vh) ═══════════ -->
+  <record id="cat_ops_day" model="octa.report.catalog">
+    <field name="code">BC-VH-NGAY</field>
+    <field name="name">Báo cáo vận hành ngày (VH08)</field>
+    <field name="owner_role">ops</field>
+    <field name="frequency">day</field>
+    <field name="recipients">Lead VH; TDA Bigtel</field>
+    <field name="deadline_note">Dashboard ngày sẵn sàng trước 09:00</field>
+    <field name="sequence">10</field>
+  </record>
+  <record id="cat_ops_week" model="octa.report.catalog">
+    <field name="code">BC-VH-TUAN</field>
+    <field name="name">Báo cáo phân tích tuần VH</field>
+    <field name="owner_role">ops</field>
+    <field name="frequency">week</field>
+    <field name="recipients">Lead VH; TDA Bigtel</field>
+    <field name="deadline_note">Trước 10:00 thứ Hai tuần kế tiếp</field>
+    <field name="sequence">20</field>
+  </record>
+  <record id="cat_ops_month" model="octa.report.catalog">
+    <field name="code">BC-VH-THANG</field>
+    <field name="name">Báo cáo phân tích tháng VH</field>
+    <field name="owner_role">ops</field>
+    <field name="frequency">month</field>
+    <field name="recipients">TDA Bigtel; PPKD</field>
+    <field name="deadline_note">Ngày làm việc thứ 5 tháng kế tiếp</field>
+    <field name="sequence">30</field>
+  </record>
+  <record id="cat_ops_quarter" model="octa.report.catalog">
+    <field name="code">BC-VH-QUY</field>
+    <field name="name">Báo cáo phân tích quý VH</field>
+    <field name="owner_role">ops</field>
+    <field name="frequency">quarter</field>
+    <field name="recipients">TDA Bigtel; PPKD; TPKD</field>
+    <field name="deadline_note">Theo lịch tổng kết</field>
+    <field name="sequence">40</field>
+  </record>
+  <record id="cat_ops_advance" model="octa.report.catalog">
+    <field name="code">BC-VH-UTV</field>
+    <field name="name">Báo cáo đối soát ứng tiền Viettel (VH06)</field>
+    <field name="owner_role">ops</field>
+    <field name="frequency">periodic</field>
+    <field name="recipients">Phòng KT; TDA Bigtel</field>
+    <field name="deadline_note">Theo kỳ đối soát</field>
+    <field name="sequence">50</field>
+  </record>
+  <record id="cat_ops_adhoc" model="octa.report.catalog">
+    <field name="code">BC-VH-DX</field>
+    <field name="name">Báo cáo đột xuất VH (sự cố)</field>
+    <field name="owner_role">ops</field>
+    <field name="frequency">adhoc</field>
+    <field name="recipients">Lead VH; TDA Bigtel</field>
+    <field name="deadline_note">Trong 30 phút</field>
+    <field name="sequence">60</field>
+  </record>
+
+  <!-- ═══════════ LEAD CSKH & VHTM (lead_cskh mục IX) ═══════════ -->
+  <record id="cat_lead_shift" model="octa.report.catalog">
+    <field name="code">BC-LEAD-CA</field>
+    <field name="name">Báo cáo ca (Lead)</field>
+    <field name="owner_role">lead</field>
+    <field name="frequency">shift</field>
+    <field name="recipients">TDA Bigtel; Lead ca kế tiếp</field>
+    <field name="deadline_note">Cuối ca</field>
+    <field name="sequence">10</field>
+  </record>
+  <record id="cat_lead_day" model="octa.report.catalog">
+    <field name="code">BC-LEAD-NGAY</field>
+    <field name="name">Báo cáo ngày CSKH &amp; VHTM (Lead)</field>
+    <field name="owner_role">lead</field>
+    <field name="frequency">day</field>
+    <field name="recipients">TDA Bigtel; PPKD (khi yêu cầu)</field>
+    <field name="deadline_note">Trước 09:30 ngày làm việc kế tiếp</field>
+    <field name="sequence">20</field>
+  </record>
+  <record id="cat_lead_week" model="octa.report.catalog">
+    <field name="code">BC-LEAD-TUAN</field>
+    <field name="name">Báo cáo tuần (Lead)</field>
+    <field name="owner_role">lead</field>
+    <field name="frequency">week</field>
+    <field name="recipients">TDA Bigtel; TPKD (khi yêu cầu)</field>
+    <field name="deadline_note">Trước 10:00 thứ Hai tuần kế tiếp</field>
+    <field name="sequence">30</field>
+  </record>
+  <record id="cat_lead_month" model="octa.report.catalog">
+    <field name="code">BC-LEAD-THANG</field>
+    <field name="name">Báo cáo tháng (Lead)</field>
+    <field name="owner_role">lead</field>
+    <field name="frequency">month</field>
+    <field name="recipients">TDA Bigtel; TPKD; HCNS</field>
+    <field name="deadline_note">Ngày làm việc thứ 5 tháng kế tiếp</field>
+    <field name="sequence">40</field>
+  </record>
+  <record id="cat_lead_adhoc" model="octa.report.catalog">
+    <field name="code">BC-LEAD-DX</field>
+    <field name="name">Báo cáo đột xuất (Lead)</field>
+    <field name="owner_role">lead</field>
+    <field name="frequency">adhoc</field>
+    <field name="recipients">TDA Bigtel; TPKD; phòng liên quan</field>
+    <field name="deadline_note">Trong 30 phút</field>
+    <field name="sequence">50</field>
+  </record>
+
+  <!-- ═══════════ TDABG (tdabg Phần 8, BC-BT-01..08) ═══════════ -->
+  <record id="cat_tdabg_day" model="octa.report.catalog">
+    <field name="code">BC-BT-01</field>
+    <field name="name">BC vận hành Bigtel ngày</field>
+    <field name="owner_role">tdabg</field>
+    <field name="frequency">day</field>
+    <field name="recipients">PPKD; TPKD</field>
+    <field name="deadline_note">Trước 09:30</field>
+    <field name="sequence">10</field>
+  </record>
+  <record id="cat_tdabg_week" model="octa.report.catalog">
+    <field name="code">BC-BT-02</field>
+    <field name="name">BC Bigtel tuần</field>
+    <field name="owner_role">tdabg</field>
+    <field name="frequency">week</field>
+    <field name="recipients">PPKD; TPKD; KT/TC</field>
+    <field name="deadline_note">Thứ Hai trước 10:00</field>
+    <field name="sequence">20</field>
+  </record>
+  <record id="cat_tdabg_month" model="octa.report.catalog">
+    <field name="code">BC-BT-03</field>
+    <field name="name">BC Bigtel tháng (kèm đối soát)</field>
+    <field name="owner_role">tdabg</field>
+    <field name="frequency">month</field>
+    <field name="recipients">PPKD; TPKD; BGĐ</field>
+    <field name="deadline_note">Ngày làm việc thứ 5 tháng kế tiếp</field>
+    <field name="sequence">30</field>
+  </record>
+  <record id="cat_tdabg_quarter" model="octa.report.catalog">
+    <field name="code">BC-BT-04</field>
+    <field name="name">BC Bigtel quý/năm</field>
+    <field name="owner_role">tdabg</field>
+    <field name="frequency">quarter</field>
+    <field name="recipients">PPKD; TPKD; BGĐ; HCNS</field>
+    <field name="deadline_note">Theo lịch tổng kết Phòng KD</field>
+    <field name="sequence">40</field>
+  </record>
+  <record id="cat_tdabg_adhoc" model="octa.report.catalog">
+    <field name="code">BC-BT-05</field>
+    <field name="name">BC đột xuất (ranh đỏ, sự cố)</field>
+    <field name="owner_role">tdabg</field>
+    <field name="frequency">adhoc</field>
+    <field name="recipients">PPKD; TPKD; BGĐ; CN/KT</field>
+    <field name="deadline_note">Trong 1 giờ kể từ khi phát hiện</field>
+    <field name="sequence">50</field>
+  </record>
+  <record id="cat_tdabg_recon" model="octa.report.catalog">
+    <field name="code">BC-BT-06</field>
+    <field name="name">BC đối soát DT/CN/TK Bigtel</field>
+    <field name="owner_role">tdabg</field>
+    <field name="frequency">periodic</field>
+    <field name="recipients">Phòng KT; PPKD; TPKD</field>
+    <field name="deadline_note">Tuần/tháng</field>
+    <field name="sequence">60</field>
+  </record>
+  <record id="cat_tdabg_ncc" model="octa.report.catalog">
+    <field name="code">BC-BT-07</field>
+    <field name="name">BC NCC Bigtel (đánh giá định kỳ)</field>
+    <field name="owner_role">tdabg</field>
+    <field name="frequency">month</field>
+    <field name="recipients">PPKD; TPKD; Phòng TC</field>
+    <field name="deadline_note">Tháng/quý</field>
+    <field name="sequence">70</field>
+  </record>
+  <record id="cat_tdabg_kpi" model="octa.report.catalog">
+    <field name="code">BC-BT-08</field>
+    <field name="name">BC KPI 4 nhóm Bigtel</field>
+    <field name="owner_role">tdabg</field>
+    <field name="frequency">month</field>
+    <field name="recipients">PPKD; HCNS</field>
+    <field name="deadline_note">Tháng/quý</field>
+    <field name="sequence">80</field>
+  </record>
+
+</data>
+</odoo>

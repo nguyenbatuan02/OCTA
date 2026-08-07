@@ -59,6 +59,13 @@
                 confirm="Bạn xác nhận đã nhận bàn giao ca và chịu trách nhiệm xử lý tiếp ticket này?"
                 title="Xác nhận bạn đã tiếp nhận ticket từ ca trước"/>
 
+        <button name="action_mark_first_response"
+                string="💬 Đã phản hồi KH"
+                type="object"
+                class="btn-primary"
+                invisible="first_response_at or ticket_type != 'incident'"
+                title="Ghi mốc phản hồi đầu tiên cho khách (đo SLA phản hồi)"/>
+
       </xpath>
 
       <!-- ══════════════════════════════════════════════════════════
@@ -71,6 +78,16 @@
         <field name="is_check_overdue"  invisible="1"/>
         <field name="linked_is_done"    invisible="1"/>
         <field name="wait_for_linked"   invisible="1"/>
+        <field name="ticket_type"       invisible="1"/>
+        <field name="first_response_at" invisible="1"/>
+
+        <!-- Alert: khiếu nại lặp lại -->
+        <div class="alert alert-warning mb-0" invisible="not is_repeat" role="alert">
+          <i class="fa fa-repeat me-2" title="Lặp lại"/>
+          <strong>Khiếu nại lặp lại!</strong>&amp;nbsp;Cùng khách hàng &amp; loại việc với ticket
+          "<field name="repeat_ref_id" readonly="1" nolabel="1" class="d-inline"/>"
+          trong 30 ngày gần nhất.
+        </div>
 
         <!-- Alert: đang có bàn giao ca chờ xác nhận -->
         <div class="alert alert-warning mb-0 d-flex align-items-center"
@@ -177,7 +194,7 @@
                    invisible="issue_type_ops not in ['vh05_production_check','vh05_production_incident']"/>
           </group>
           <group>
-            <field name="vh_note" nolabel="1"
+            <field name="vh_note" nolabel="1" colspan="2"
                    placeholder="Ghi nội dung / kết quả / kế hoạch vận hành..."/>
           </group>
         </group>
@@ -198,6 +215,19 @@
         </group>
 
         <!-- ── Bàn giao ca — readonly, dùng để tra cứu lịch sử ── -->
+        <group string="Kết quả &amp; đánh giá case"
+               invisible="ticket_type != 'incident'">
+          <group>
+            <field name="result_final"/>
+            <field name="first_response_minutes"/>
+          </group>
+          <group>
+            <field name="is_fcr"/>
+            <field name="reopen_count"/>
+            <field name="is_repeat"/>
+          </group>
+        </group>
+
         <group string="Bàn giao ca" invisible="not shift and not handover_by_id">
           <group>
             <field name="shift"          readonly="1"/>
@@ -210,7 +240,7 @@
           </group>
           <group string="Nội dung bàn giao" colspan="2"
                  invisible="not handover_note">
-            <field name="handover_note" nolabel="1" readonly="1"/>
+            <field name="handover_note" nolabel="1" colspan="2" readonly="1"/>
           </group>
         </group>
 

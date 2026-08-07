@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- ══════════ octa.report.catalog ══════════ -->
+  <record id="view_report_catalog_tree" model="ir.ui.view">
+    <field name="name">octa.report.catalog.tree</field>
+    <field name="model">octa.report.catalog</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="code"/>
+        <field name="name"/>
+        <field name="owner_role"/>
+        <field name="frequency"/>
+        <field name="recipients"/>
+        <field name="deadline_note"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_report_catalog_form" model="ir.ui.view">
+    <field name="name">octa.report.catalog.form</field>
+    <field name="model">octa.report.catalog</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <group>
+              <field name="code"/>
+              <field name="name"/>
+              <field name="owner_role"/>
+              <field name="frequency"/>
+            </group>
+            <group>
+              <field name="scope"/>
+              <field name="recipients"/>
+              <field name="deadline_note"/>
+              <field name="sequence"/>
+              <field name="active"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_report_catalog" model="ir.actions.act_window">
+    <field name="name">Danh mục loại báo cáo</field>
+    <field name="res_model">octa.report.catalog</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <!-- ══════════ octa.report ══════════ -->
+  <record id="view_octa_report_form" model="ir.ui.view">
+    <field name="name">octa.report.form</field>
+    <field name="model">octa.report</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_submit" string="Nộp báo cáo" type="object"
+                  class="btn-primary" invisible="state != 'draft'"/>
+          <button name="action_approve" string="Duyệt" type="object"
+                  class="btn-success" invisible="state != 'submitted'"
+                  groups="octa_base.group_tdabg"/>
+          <button name="action_reset_draft" string="Trả về Nháp" type="object"
+                  invisible="state == 'draft' or state == 'approved'"/>
+          <button name="action_fill_from_kpi" string="Lấy số liệu từ KPI" type="object"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved"/>
+        </header>
+        <sheet>
+          <field name="is_overdue" invisible="1"/>
+          <div class="alert alert-danger" role="alert" invisible="not is_overdue">
+            <i class="fa fa-exclamation-triangle me-2" title="Quá hạn"/>
+            <strong>Báo cáo quá hạn nộp!</strong> Hạn:
+            <field name="deadline" readonly="1" nolabel="1" class="d-inline"/>
+          </div>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name"/></h1>
+          </div>
+          <group>
+            <group>
+              <field name="catalog_id"/>
+              <field name="owner_role" readonly="1"/>
+              <field name="frequency" readonly="1"/>
+              <field name="shift" invisible="frequency != 'shift'"/>
+            </group>
+            <group>
+              <field name="author_id" readonly="1"/>
+              <field name="period_date"/>
+              <field name="deadline" readonly="1"/>
+              <field name="recipients" readonly="1"/>
+            </group>
+          </group>
+          <group string="Số liệu KPI">
+            <group>
+              <field name="sla_ontime_pct"/>
+              <field name="fcr_pct"/>
+            </group>
+            <group>
+              <field name="repeat_pct"/>
+              <field name="pending_overdue"/>
+              <field name="kpi_id" readonly="1"/>
+            </group>
+          </group>
+          <notebook>
+            <page string="Nội dung">
+              <group>
+                <field name="summary" placeholder="Đầu việc chính trong kỳ..."/>
+                <field name="incidents" placeholder="Sự cố / ticket nổi bật..."/>
+                <field name="gate_actions" placeholder="Mở/đóng cổng..."/>
+                <field name="refund_actions" placeholder="Hoàn tiền / nạp bù..."/>
+                <field name="handover_note" placeholder="Tồn đọng chuyển kỳ sau..."/>
+                <field name="proposals" placeholder="Đề xuất..."/>
+              </group>
+            </page>
+          </notebook>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_octa_report_tree" model="ir.ui.view">
+    <field name="name">octa.report.tree</field>
+    <field name="model">octa.report</field>
+    <field name="arch" type="xml">
+      <tree decoration-danger="is_overdue" decoration-success="state == 'approved'">
+        <field name="name"/>
+        <field name="catalog_id"/>
+        <field name="owner_role"/>
+        <field name="frequency"/>
+        <field name="author_id"/>
+        <field name="period_date"/>
+        <field name="deadline"/>
+        <field name="is_overdue"/>
+        <field name="state" widget="badge"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_octa_report_search" model="ir.ui.view">
+    <field name="name">octa.report.search</field>
+    <field name="model">octa.report</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name"/>
+        <field name="catalog_id"/>
+        <field name="author_id"/>
+        <filter name="f_draft" string="Nháp" domain="[('state','=','draft')]"/>
+        <filter name="f_submitted" string="Chờ duyệt" domain="[('state','=','submitted')]"/>
+        <filter name="f_overdue" string="Quá hạn" domain="[('is_overdue','=',True)]"/>
+        <separator/>
+        <filter name="f_cskh" string="CSKH" domain="[('owner_role','=','cskh')]"/>
+        <filter name="f_ops" string="Vận hành" domain="[('owner_role','=','ops')]"/>
+        <filter name="f_lead" string="Lead" domain="[('owner_role','=','lead')]"/>
+        <filter name="f_tdabg" string="TDABG" domain="[('owner_role','=','tdabg')]"/>
+        <group expand="0" string="Nhóm theo">
+          <filter name="g_role" string="Bộ phận" context="{'group_by':'owner_role'}"/>
+          <filter name="g_freq" string="Tần suất" context="{'group_by':'frequency'}"/>
+          <filter name="g_state" string="Trạng thái" context="{'group_by':'state'}"/>
+          <filter name="g_author" string="Người lập" context="{'group_by':'author_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_octa_report" model="ir.actions.act_window">
+    <field name="name">Báo cáo</field>
+    <field name="res_model">octa.report</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <record id="action_octa_report_approve" model="ir.actions.act_window">
+    <field name="name">Báo cáo chờ tôi duyệt</field>
+    <field name="res_model">octa.report</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('state','=','submitted')]</field>
+  </record>
+
+</odoo>

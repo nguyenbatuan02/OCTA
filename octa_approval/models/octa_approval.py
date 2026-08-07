@@ -454,6 +454,7 @@ class OctaApproval(models.Model):
             'tdabg': 'octa_base.group_tdabg',
             'ppkd':  'octa_base.group_ppkd',
             'tpkd':  'octa_base.group_tpkd',
+            'gd':    'octa_base.group_gd',
         }
         xml_id = group_map.get(role)
         if not xml_id:

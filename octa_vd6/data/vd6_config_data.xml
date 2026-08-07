@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+  <!-- Khóa API cho Portal (UAT) — ĐỔI trước khi lên production -->
+  <record id="param_vd6_api_key" model="ir.config_parameter">
+    <field name="key">octa_vd6.api_key</field>
+    <field name="value">CHANGE_ME_UAT_KEY</field>
+  </record>
+
+</data>
+</odoo>

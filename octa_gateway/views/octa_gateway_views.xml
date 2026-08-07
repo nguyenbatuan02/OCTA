@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <!-- ══ FORM ══ -->
     <record id="view_octa_gateway_form" model="ir.ui.view">
         <field name="name">octa.gateway.form</field>
@@ -29,18 +28,15 @@
                          invisible="not is_balance_low">
                         🟡 <strong>SỐ DƯ API THẤP</strong> —
                         <field name="api_balance" readonly="1" nolabel="1"
-                               widget="monetary" options="{'currency_field': false}"/> VNĐ
+                               /> VNĐ
                         ≤ ngưỡng <field name="api_balance_threshold" readonly="1" nolabel="1"
-                                       widget="monetary" options="{'currency_field': false}"/> VNĐ
+                                       /> VNĐ
                     </div>
-
                     <field name="is_balance_low" invisible="1"/>
-
                     <div class="oe_title">
                         <h1><field name="name"/></h1>
                         <h3><field name="code" placeholder="Mã kỹ thuật VD: GW-VT-39"/></h3>
                     </div>
-
                     <group>
                         <group string="Thông tin cổng">
                             <field name="gateway_type"/>
@@ -54,17 +50,14 @@
                         </group>
                         <group string="Vận hành">
                             <field name="api_balance"
-                                   widget="monetary"
-                                   options="{'currency_field': false}"/>
+                                   />
                             <field name="api_balance_threshold"
-                                   widget="monetary"
-                                   options="{'currency_field': false}"/>
+                                   />
                             <field name="success_rate"/>
                             <field name="error_count"/>
                             <field name="last_error_time"/>
                         </group>
                     </group>
-
                     <!-- Nút xem lịch sử lệnh -->
                     <div>
                         <button name="action_view_commands"
@@ -84,7 +77,6 @@
             </form>
         </field>
     </record>
-
     <!-- ══ LIST ══ -->
     <record id="view_octa_gateway_list" model="ir.ui.view">
         <field name="name">octa.gateway.list</field>
@@ -103,8 +95,7 @@
                 <field name="state"/>
                 <field name="error_count"/>
                 <field name="api_balance"
-                       widget="monetary"
-                       options="{'currency_field': false}"/>
+                       />
                 <field name="success_rate" string="Success %"/>
                 <field name="emergency_deadline"/>
                 <button name="action_open_command_wizard"
@@ -115,7 +106,6 @@
             </tree>
         </field>
     </record>
-
     <!-- ══ ACTION ══ -->
     <record id="action_octa_gateway" model="ir.actions.act_window">
         <field name="name">Cổng API</field>
@@ -129,12 +119,10 @@
             <p>Tạo cổng mới để bắt đầu theo dõi và quản lý.</p>
         </field>
     </record>
-
     <record id="action_octa_gateway_locked" model="ir.actions.act_window">
         <field name="name">Cổng đang khóa</field>
         <field name="res_model">octa.gateway</field>
         <field name="view_mode">tree,form</field>
         <field name="domain">[('state', '=', 'locked')]</field>
     </record>
-
 </odoo>

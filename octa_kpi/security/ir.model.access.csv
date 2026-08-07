@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_octa_kpi_cskh,octa.kpi cskh,model_octa_kpi,octa_base.group_octa_cskh,1,0,0,0
+access_octa_kpi_ops,octa.kpi ops,model_octa_kpi,octa_base.group_octa_ops,1,0,0,0
+access_octa_kpi_lead,octa.kpi lead,model_octa_kpi,octa_base.group_lead,1,1,1,0
+access_octa_kpi_tdabg,octa.kpi tdabg,model_octa_kpi,octa_base.group_tdabg,1,1,1,1

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+  <!-- Nhóm phụ trách -->
+  <record id="team_cskh" model="octa.vd6.team">
+    <field name="code">CSKH</field><field name="name">Chăm sóc khách hàng</field>
+  </record>
+  <record id="team_vhtm" model="octa.vd6.team">
+    <field name="code">VHTM</field><field name="name">Vận hành thương mại</field>
+  </record>
+  <record id="team_cn" model="octa.vd6.team">
+    <field name="code">CN</field><field name="name">Công nghệ</field>
+  </record>
+  <record id="team_kt" model="octa.vd6.team">
+    <field name="code">KT</field><field name="name">Kế toán</field>
+  </record>
+
+  <!-- Ánh xạ Tình huống → nhóm (đề xuất — chờ Phòng CN xác nhận) -->
+  <!-- TH1 -->
+  <record id="rule_th1_cskh" model="octa.vd6.assign.rule"><field name="loai_th">TH1</field><field name="team_id" ref="team_cskh"/><field name="role">OWNER</field></record>
+  <record id="rule_th1_kt" model="octa.vd6.assign.rule"><field name="loai_th">TH1</field><field name="team_id" ref="team_kt"/><field name="role">SUPPORT</field></record>
+  <!-- TH2 -->
+  <record id="rule_th2_cskh" model="octa.vd6.assign.rule"><field name="loai_th">TH2</field><field name="team_id" ref="team_cskh"/><field name="role">OWNER</field></record>
+  <record id="rule_th2_vhtm" model="octa.vd6.assign.rule"><field name="loai_th">TH2</field><field name="team_id" ref="team_vhtm"/><field name="role">SUPPORT</field></record>
+  <!-- TH3 -->
+  <record id="rule_th3_cskh" model="octa.vd6.assign.rule"><field name="loai_th">TH3</field><field name="team_id" ref="team_cskh"/><field name="role">OWNER</field></record>
+  <record id="rule_th3_cn" model="octa.vd6.assign.rule"><field name="loai_th">TH3</field><field name="team_id" ref="team_cn"/><field name="role">SUPPORT</field></record>
+  <record id="rule_th3_kt" model="octa.vd6.assign.rule"><field name="loai_th">TH3</field><field name="team_id" ref="team_kt"/><field name="role">SUPPORT</field></record>
+  <!-- TH4 -->
+  <record id="rule_th4_vhtm" model="octa.vd6.assign.rule"><field name="loai_th">TH4</field><field name="team_id" ref="team_vhtm"/><field name="role">OWNER</field></record>
+  <record id="rule_th4_cn" model="octa.vd6.assign.rule"><field name="loai_th">TH4</field><field name="team_id" ref="team_cn"/><field name="role">SUPPORT</field></record>
+  <!-- TH5 -->
+  <record id="rule_th5_cskh" model="octa.vd6.assign.rule"><field name="loai_th">TH5</field><field name="team_id" ref="team_cskh"/><field name="role">OWNER</field></record>
+  <record id="rule_th5_vhtm" model="octa.vd6.assign.rule"><field name="loai_th">TH5</field><field name="team_id" ref="team_vhtm"/><field name="role">SUPPORT</field></record>
+  <record id="rule_th5_cn" model="octa.vd6.assign.rule"><field name="loai_th">TH5</field><field name="team_id" ref="team_cn"/><field name="role">SUPPORT</field></record>
+  <!-- TH6 -->
+  <record id="rule_th6_cskh" model="octa.vd6.assign.rule"><field name="loai_th">TH6</field><field name="team_id" ref="team_cskh"/><field name="role">OWNER</field></record>
+  <record id="rule_th6_kt" model="octa.vd6.assign.rule"><field name="loai_th">TH6</field><field name="team_id" ref="team_kt"/><field name="role">SUPPORT</field></record>
+  <!-- TH7 -->
+  <record id="rule_th7_cskh" model="octa.vd6.assign.rule"><field name="loai_th">TH7</field><field name="team_id" ref="team_cskh"/><field name="role">OWNER</field></record>
+  <record id="rule_th7_kt" model="octa.vd6.assign.rule"><field name="loai_th">TH7</field><field name="team_id" ref="team_kt"/><field name="role">SUPPORT</field></record>
+  <!-- TH8 -->
+  <record id="rule_th8_cskh" model="octa.vd6.assign.rule"><field name="loai_th">TH8</field><field name="team_id" ref="team_cskh"/><field name="role">OWNER</field></record>
+  <record id="rule_th8_kt" model="octa.vd6.assign.rule"><field name="loai_th">TH8</field><field name="team_id" ref="team_kt"/><field name="role">SUPPORT</field></record>
+
+</data>
+</odoo>

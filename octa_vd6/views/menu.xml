@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- "Portal" = ticket Vòng đời 6 (Portal tạo), nằm dưới "Tất cả Tickets" -->
+  <menuitem id="menu_vd6_ticket"
+            name="Portal"
+            parent="octa_ticket.menu_octa_ticket_all"
+            action="action_vd6_ticket"
+            groups="octa_base.group_octa_cskh,octa_base.group_octa_ops"
+            sequence="30"/>
+
+  <!-- Cấu hình ánh xạ nhóm: ẩn khỏi menu (action vẫn còn, chỉ admin dùng khi cần) -->
+
+</odoo>

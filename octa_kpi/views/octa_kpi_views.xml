@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <record id="view_octa_kpi_tree" model="ir.ui.view">
+    <field name="name">octa.kpi.tree</field>
+    <field name="model">octa.kpi</field>
+    <field name="arch" type="xml">
+      <tree decoration-success="grade == 'a'" decoration-warning="grade == 'b'"
+            decoration-danger="grade == 'c'">
+        <field name="user_id"/>
+        <field name="dept"/>
+        <field name="period_type"/>
+        <field name="date_from"/>
+        <field name="date_to"/>
+        <field name="ticket_total"/>
+        <field name="sla_ontime_pct"/>
+        <field name="fcr_pct"/>
+        <field name="repeat_pct"/>
+        <field name="pending_overdue"/>
+        <field name="avg_score"/>
+        <field name="report_ontime_pct"/>
+        <field name="grade" widget="badge"/>
+        <button name="action_recompute" string="Tính lại" type="object" icon="fa-refresh"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_octa_kpi_form" model="ir.ui.view">
+    <field name="name">octa.kpi.form</field>
+    <field name="model">octa.kpi</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_recompute" string="Tính lại KPI" type="object"
+                  class="btn-primary"/>
+        </header>
+        <sheet>
+          <group>
+            <group>
+              <field name="user_id"/>
+              <field name="dept"/>
+              <field name="period_type"/>
+            </group>
+            <group>
+              <field name="date_from"/>
+              <field name="date_to"/>
+              <field name="grade"/>
+              <field name="grade_note"/>
+              <field name="computed_at"/>
+            </group>
+          </group>
+          <group string="Sản lượng">
+            <group>
+              <field name="ticket_total"/>
+              <field name="ticket_closed"/>
+              <field name="ticket_open"/>
+            </group>
+            <group>
+              <field name="pending_overdue"/>
+              <field name="avg_score"/>
+            </group>
+          </group>
+          <group string="SLA / Chất lượng">
+            <group>
+              <field name="sla_total"/>
+              <field name="sla_ontime"/>
+              <field name="sla_ontime_pct"/>
+            </group>
+            <group>
+              <field name="fcr_count"/>
+              <field name="fcr_pct"/>
+              <field name="repeat_count"/>
+              <field name="repeat_pct"/>
+            </group>
+          </group>
+          <group string="Báo cáo">
+            <group>
+              <field name="report_total"/>
+              <field name="report_ontime"/>
+              <field name="report_ontime_pct"/>
+            </group>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_octa_kpi_search" model="ir.ui.view">
+    <field name="name">octa.kpi.search</field>
+    <field name="model">octa.kpi</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="user_id"/>
+        <filter name="f_month" string="Kỳ tháng" domain="[('period_type','=','month')]"/>
+        <filter name="f_day" string="Kỳ ngày" domain="[('period_type','=','day')]"/>
+        <separator/>
+        <filter name="f_a" string="Loại A" domain="[('grade','=','a')]"/>
+        <filter name="f_c" string="Loại C" domain="[('grade','=','c')]"/>
+        <group expand="0" string="Nhóm theo">
+          <filter name="g_dept" string="Bộ phận" context="{'group_by':'dept'}"/>
+          <filter name="g_grade" string="Xếp loại" context="{'group_by':'grade'}"/>
+          <filter name="g_period" string="Kỳ" context="{'group_by':'period_type'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_octa_kpi" model="ir.actions.act_window">
+    <field name="name">KPI CSKH &amp; VH</field>
+    <field name="res_model">octa.kpi</field>
+    <field name="view_mode">tree,form</field>
+    <field name="context">{'search_default_f_month': 1}</field>
+  </record>
+
+  <!-- Wizard nhanh: sinh KPI kỳ hiện tại -->
+  <record id="action_octa_kpi_generate_month" model="ir.actions.server">
+    <field name="name">Sinh KPI tháng hiện tại</field>
+    <field name="model_id" ref="model_octa_kpi"/>
+    <field name="state">code</field>
+    <field name="code">
+recs = model.generate_for_period('month')
+action = {
+    'type': 'ir.actions.act_window',
+    'name': 'KPI tháng hiện tại',
+    'res_model': 'octa.kpi',
+    'view_mode': 'tree,form',
+    'domain': [('id', 'in', recs.ids)],
+}
+    </field>
+  </record>
+
+</odoo>

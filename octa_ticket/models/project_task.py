@@ -254,6 +254,48 @@ class ProjectTask(models.Model):
         help='True khi Lead đã bàn giao nhưng NV ca sau chưa xác nhận.',
     )
 
+    # ── Kết quả cuối & chấm điểm case (dùng cho KPI) ────────────────
+    # Bắt buộc chọn khi đóng ticket sự vụ (incident) — theo SOP CSKH/VH
+    # "mỗi case phải chốt 1 kết quả cuối rõ ràng".
+    result_final = fields.Selection([
+        ('success',    'Xử lý thành công'),
+        ('refund',     'Đã hoàn tiền'),
+        ('topup',      'Đã nạp bù'),
+        ('no_issue',   'Không thuộc Octa / không có lỗi'),
+        ('forwarded',  'Chuyển bộ phận khác'),
+        ('failed',     'Thất bại / không xử lý được'),
+        ('monitoring', 'Theo dõi có kiểm soát'),
+    ], string='Kết quả cuối', tracking=True, copy=False,
+        help='Bắt buộc chọn khi đóng ticket sự vụ.')
+
+    # ── FCR — First Contact Resolution ──────────────────────────────
+    first_response_at = fields.Datetime(
+        'Thời điểm phản hồi đầu tiên', readonly=True, copy=False, tracking=True,
+        help='Ghi khi NV bấm "Đã phản hồi KH". Dùng đo SLA phản hồi (CS10 ≤3 phút).',
+    )
+    first_response_minutes = fields.Integer(
+        'Phút đến phản hồi đầu', compute='_compute_first_response', store=True,
+    )
+    reopen_count = fields.Integer(
+        'Số lần mở lại', default=0, readonly=True, copy=False, tracking=True,
+        help='Tăng mỗi lần ticket đã đóng bị mở lại → dùng tính FCR.',
+    )
+    is_fcr = fields.Boolean(
+        'Giải quyết lần đầu (FCR)', compute='_compute_fcr', store=True,
+        help='True khi ticket đã đóng và chưa từng bị mở lại.',
+    )
+
+    # ── Tái phát / khiếu nại lặp lại ────────────────────────────────
+    is_repeat = fields.Boolean(
+        'Tái phát / lặp lại', default=False, readonly=True, copy=False,
+        index=True, tracking=True,
+        help='Tự phát hiện khi cùng KH + cùng loại việc trong 30 ngày gần nhất.',
+    )
+    repeat_ref_id = fields.Many2one(
+        'project.task', 'Trùng với ticket', readonly=True, copy=False,
+        ondelete='set null',
+    )
+
     # is_ticket_closed — computed boolean dùng trong invisible của <header> button
     # Odoo 17: project.task.type dùng field 'fold', KHÔNG có 'is_closed'
     # Không dùng stage_id.fold trực tiếp trong XML vì Odoo 17 không resolve
@@ -325,6 +367,20 @@ class ProjectTask(models.Model):
                 t.linked_ticket_id.stage_id.fold
                 if t.linked_ticket_id else True
             )
+
+    @api.depends('first_response_at', 'create_date')
+    def _compute_first_response(self):
+        for t in self:
+            if t.first_response_at and t.create_date:
+                delta = t.first_response_at - t.create_date
+                t.first_response_minutes = int(delta.total_seconds() // 60)
+            else:
+                t.first_response_minutes = 0
+
+    @api.depends('stage_id.fold', 'reopen_count')
+    def _compute_fcr(self):
+        for t in self:
+            t.is_fcr = bool(t.stage_id.fold and t.reopen_count == 0)
 
     @api.depends('stage_id', 'stage_id.fold')
     def _compute_is_ticket_closed(self):
@@ -412,12 +468,16 @@ class ProjectTask(models.Model):
                 for t in templates
             ]
 
-        return super().create(vals)
+        task = super().create(vals)
+        task._detect_repeat()
+        return task
 
     # ── Write ────────────────────────────────────────────────────────
 
     def write(self, vals):
-        # Chặn đóng ticket khi ticket liên quan chưa xong
+        # Chặn đóng ticket khi ticket liên quan chưa xong + bắt buộc kết quả cuối;
+        # phát hiện mở lại (fold → non-fold) để đếm reopen SAU khi write.
+        reopened = self.browse()
         if 'stage_id' in vals:
             new_stage = self.env['project.task.type'].browse(vals['stage_id'])
             if new_stage.fold:
@@ -428,6 +488,16 @@ class ProjectTask(models.Model):
                             f'Ticket liên quan "{task.linked_ticket_id.name}" '
                             f'chưa hoàn thành.'
                         )
+                    # Ticket sự vụ phải chốt kết quả cuối trước khi đóng
+                    result = vals.get('result_final', task.result_final)
+                    if task.ticket_type == 'incident' and not result:
+                        raise ValidationError(
+                            f'Không thể đóng "{task.name}".\n'
+                            'Ticket sự vụ phải chọn "Kết quả cuối" trước khi đóng.'
+                        )
+            else:
+                # Ticket đang đóng (fold) mà chuyển sang stage mở → mở lại
+                reopened = self.filtered(lambda t: t.stage_id.fold)
 
         # Đổi issue_type → tính lại type/sla/checklist
         issue_type_changed = (
@@ -447,7 +517,14 @@ class ProjectTask(models.Model):
                 ]
 
         # NOTE: date_closed xử lý ở octa_project.write() — không duplicate ở đây
-        return super().write(vals)
+        res = super().write(vals)
+
+        # Mở lại ticket đã đóng → tăng reopen_count (phục vụ tính FCR)
+        for task in reopened:
+            super(ProjectTask, task).write(
+                {'reopen_count': task.reopen_count + 1}
+            )
+        return res
 
     # ── Actions ─────────────────────────────────────────────────────
 
@@ -468,6 +545,55 @@ class ProjectTask(models.Model):
                 'dept':                      self.dept,
             },
         }
+
+    def action_mark_first_response(self):
+        """NV bấm khi vừa phản hồi KH lần đầu — ghi mốc SLA phản hồi."""
+        self.ensure_one()
+        if self.first_response_at:
+            raise UserError('Ticket này đã ghi nhận phản hồi đầu tiên.')
+        self.write({'first_response_at': fields.Datetime.now()})
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title':   '✅ Đã ghi nhận phản hồi',
+                'message': 'Đã ghi mốc phản hồi đầu tiên (%d phút).'
+                           % self.first_response_minutes,
+                'type':    'success',
+                'sticky':  False,
+            },
+        }
+
+    def _detect_repeat(self):
+        """
+        Tự phát hiện khiếu nại lặp lại: cùng loại việc (issue_type) và cùng
+        khách hàng (phone / customer_info) trong 30 ngày gần nhất.
+        Chỉ áp dụng cho ticket sự vụ CSKH/VH.
+        """
+        for t in self:
+            if t.ticket_type != 'incident' or not t.issue_type:
+                continue
+            since = fields.Datetime.now() - timedelta(days=30)
+            # Chỉ so khớp trên tiêu chí KH thực sự có giá trị
+            id_domain = []
+            if t.phone:
+                id_domain.append(('phone', '=', t.phone))
+            if t.customer_info:
+                id_domain.append(('customer_info', '=', t.customer_info))
+            if t.card_code:
+                id_domain.append(('card_code', '=', t.card_code))
+            if not id_domain:
+                continue
+            # Nối các tiêu chí bằng OR
+            or_domain = ['|'] * (len(id_domain) - 1) + id_domain
+            domain = [
+                ('id', '!=', t.id),
+                ('issue_type', '=', t.issue_type),
+                ('create_date', '>=', since),
+            ] + or_domain
+            prior = self.search(domain, order='create_date desc', limit=1)
+            if prior:
+                t.write({'is_repeat': True, 'repeat_ref_id': prior.id})
 
     def action_handover(self):
         """

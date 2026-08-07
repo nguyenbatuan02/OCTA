@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="1">
+
+  <record id="cron_octa_kpi_daily" model="ir.cron">
+    <field name="name">Octa KPI: chốt KPI ngày hôm trước</field>
+    <field name="model_id" ref="model_octa_kpi"/>
+    <field name="state">code</field>
+    <field name="code">model._cron_generate_daily()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">days</field>
+    <field name="numbercall">-1</field>
+    <field name="active">True</field>
+    <field name="user_id" ref="base.user_root"/>
+  </record>
+
+  <record id="cron_octa_kpi_monthly" model="ir.cron">
+    <field name="name">Octa KPI: chốt KPI tháng trước</field>
+    <field name="model_id" ref="model_octa_kpi"/>
+    <field name="state">code</field>
+    <field name="code">model._cron_generate_monthly()</field>
+    <field name="interval_number">1</field>
+    <field name="interval_type">months</field>
+    <field name="numbercall">-1</field>
+    <field name="active">True</field>
+    <field name="user_id" ref="base.user_root"/>
+  </record>
+
+</data>
+</odoo>

@@ -98,6 +98,27 @@ class OctaApprovalConfig(models.Model):
         digits=(15, 0), tracking=True,
     )
 
+    # ── Hạn mức phê duyệt Vòng đời 6 (hoàn/nạp bù giao dịch) ───────
+    # Chuỗi RIÊNG, không dùng chung với hạn mức hoàn tiền CS/VH ở trên:
+    #   Trưởng nhóm CSKH (Lead) → Trưởng dự án (TDABG) → TPKD/KTT → BGĐ
+    # Bỏ qua tầng PPKD; thêm KTT. Theo "Đặc tả API VĐ6" mục 8.
+
+    vd6_limit_lead = fields.Float(
+        'VĐ6 — Trưởng nhóm CSKH (VNĐ)', default=500_000,
+        digits=(15, 0), tracking=True,
+        help='Hoàn/nạp bù ≤ giá trị này: Lead CSKH tự duyệt.',
+    )
+    vd6_limit_tda = fields.Float(
+        'VĐ6 — Trưởng dự án (VNĐ)', default=3_000_000,
+        digits=(15, 0), tracking=True,
+        help='Vượt hạn mức Lead → Trưởng dự án (TDABG) duyệt.',
+    )
+    vd6_limit_tpkd_ktt = fields.Float(
+        'VĐ6 — TPKD / KTT (VNĐ)', default=10_000_000,
+        digits=(15, 0), tracking=True,
+        help='Vượt hạn mức TDA → TPKD hoặc KTT duyệt. Vượt nữa → Ban Giám đốc.',
+    )
+
     # ── Ngưỡng ranh đỏ vận hành ────────────────────────────────────
 
     gateway_error_threshold = fields.Integer(
@@ -284,6 +305,7 @@ class OctaApprovalConfig(models.Model):
             user = self.env.user
 
         group_map = [
+            ('gd',    'octa_base.group_gd'),
             ('tpkd',  'octa_base.group_tpkd'),
             ('ppkd',  'octa_base.group_ppkd'),
             ('tdabg', 'octa_base.group_tdabg'),
@@ -296,6 +318,22 @@ class OctaApprovalConfig(models.Model):
             if group and user in group.users:
                 return role_key
         return 'unknown'
+
+    @api.model
+    def get_vd6_approver_role(self, amount: float) -> str:
+        """
+        Xác định cấp duyệt Vòng đời 6 theo số tiền hoàn/nạp bù.
+        Trả về: 'cskh_lead' | 'tda' | 'tpkd_ktt' | 'bgd'.
+        Chuỗi riêng VĐ6 (bỏ PPKD, thêm KTT) — xem field vd6_limit_*.
+        """
+        config = self.get_active()
+        if amount <= config.vd6_limit_lead:
+            return 'cskh_lead'
+        if amount <= config.vd6_limit_tda:
+            return 'tda'
+        if amount <= config.vd6_limit_tpkd_ktt:
+            return 'tpkd_ktt'
+        return 'bgd'
 
     @api.model
     def can_approve(self, amount: float, role_key: str) -> bool:

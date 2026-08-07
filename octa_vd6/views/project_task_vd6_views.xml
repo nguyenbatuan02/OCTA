@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+  <!-- Form chung (octa_ticket): chỉ bỏ bắt buộc loại sự cố cho ticket VĐ6.
+       KHÔNG nhồi nút/khối VĐ6 vào đây nữa — VĐ6 dùng form Portal riêng bên dưới. -->
+  <record id="view_octa_ticket_form_vd6" model="ir.ui.view">
+    <field name="name">octa.ticket.form.vd6</field>
+    <field name="model">project.task</field>
+    <field name="inherit_id" ref="octa_ticket.view_octa_ticket_form"/>
+    <field name="arch" type="xml">
+      <xpath expr="//header" position="inside">
+        <field name="is_vd6" invisible="1"/>
+      </xpath>
+      <xpath expr="//field[@name='issue_type_cskh']" position="attributes">
+        <attribute name="required">dept == 'cskh' and not is_vd6</attribute>
+      </xpath>
+      <xpath expr="//field[@name='issue_type_ops']" position="attributes">
+        <attribute name="required">dept == 'ops' and not is_vd6</attribute>
+      </xpath>
+    </field>
+  </record>
+
+  <!-- Loại ticket VĐ6 khỏi các danh sách ticket chung → chỉ hiện ở menu Portal -->
+  <record id="octa_ticket.action_octa_ticket_all" model="ir.actions.act_window">
+    <field name="domain">[('is_vd6', '!=', True)]</field>
+  </record>
+  <record id="octa_ticket.action_octa_ticket_cskh" model="ir.actions.act_window">
+    <field name="domain">['&amp;', ('dept', '=', 'cskh'), ('is_vd6', '!=', True)]</field>
+  </record>
+  <record id="octa_ticket.action_octa_ticket_ops" model="ir.actions.act_window">
+    <field name="domain">['&amp;', ('dept', '=', 'ops'), ('is_vd6', '!=', True)]</field>
+  </record>
+
+  <!-- ══════════ Form RIÊNG cho ticket Portal/VĐ6 ══════════ -->
+  <record id="view_vd6_form_primary" model="ir.ui.view">
+    <field name="name">vd6.ticket.form.primary</field>
+    <field name="model">project.task</field>
+    <field name="priority">100</field>
+    <field name="arch" type="xml">
+      <form string="Ticket Portal (Vòng đời 6)">
+        <header>
+          <field name="is_vd6" invisible="1"/>
+          <field name="vd6_status" invisible="1"/>
+          <button name="action_vd6_verify" string="① Nhận &amp; xác minh" type="object"
+                  class="btn-primary" invisible="vd6_status != 'MOI_TAO'"/>
+          <button name="action_vd6_propose" string="② Trình duyệt phương án" type="object"
+                  class="btn-primary" invisible="vd6_status != 'DANG_XAC_MINH'"/>
+          <button name="action_vd6_approve" string="③ Phê duyệt" type="object"
+                  class="btn-success" invisible="vd6_status != 'CHO_PHE_DUYET'"/>
+          <button name="action_vd6_reject" string="Từ chối" type="object"
+                  class="btn-danger" invisible="vd6_status not in ('DANG_XAC_MINH','CHO_PHE_DUYET')"/>
+          <button name="action_vd6_to_reconcile" string="④ Gửi đối soát" type="object"
+                  class="btn-primary" invisible="vd6_status != 'DA_DUYET'"/>
+          <button name="action_vd6_reconciled" string="⑤ Đối soát khớp" type="object"
+                  class="btn-success" invisible="vd6_status != 'CHO_DOI_SOAT'"/>
+          <button name="action_vd6_reconcile_fail" string="Đối soát không khớp" type="object"
+                  invisible="vd6_status != 'CHO_DOI_SOAT'"/>
+          <button name="action_vd6_close" string="⑥ Đóng ticket" type="object"
+                  class="btn-success" invisible="vd6_status != 'DA_DOI_SOAT'"/>
+          <field name="stage_id" widget="statusbar" domain="[('is_vd6_stage','=',True)]"/>
+        </header>
+        <sheet>
+          <div class="oe_title">
+            <label for="name"/>
+            <h1><field name="name" readonly="1"/></h1>
+          </div>
+          <group>
+            <group string="Giao dịch">
+              <field name="vd6_ma_ticket" readonly="1"/>
+              <field name="vd6_ma_gd_goc" readonly="1"/>
+              <field name="vd6_loai_th" readonly="1"/>
+              <field name="vd6_loai_ticket" string="Loại ticket" readonly="1"/>
+              <field name="vd6_trang_thai_gd_goc" string="TT giao dịch gốc" readonly="1"/>
+              <field name="vd6_so_tien" readonly="1"/>
+              <field name="vd6_nguon_phat_hien" string="Nguồn" readonly="1"/>
+            </group>
+            <group string="Phương án &amp; phê duyệt">
+              <field name="vd6_phuong_an_de_xuat" string="Phương án"/>
+              <field name="vd6_phuong_an_da_duyet" string="Đã duyệt" readonly="1"/>
+              <field name="vd6_approver_role" string="Cấp duyệt" readonly="1"/>
+              <field name="vd6_team_summary" string="Nhóm" readonly="1"/>
+              <field name="vd6_ma_pa_thuc_hien" string="Mã PA đã làm" readonly="1"/>
+              <field name="result_final" string="Kết quả cuối"/>
+            </group>
+          </group>
+          <group string="Liên kết &amp; nguồn">
+            <field name="vd6_request_id" string="Request ID" readonly="1"/>
+            <field name="vd6_nguoi_tao_portal" string="Người tạo (Portal)" readonly="1"/>
+            <field name="vd6_ticket_khach_lien_ket" string="Ticket khách liên kết" readonly="1"/>
+            <field name="vd6_ticket_noi_bo_lien_ket" string="Ticket nội bộ liên kết" readonly="1"/>
+          </group>
+          <group string="Mô tả sự vụ">
+            <field name="description" nolabel="1" colspan="2" placeholder="Nội dung sự vụ..."/>
+          </group>
+        </sheet>
+        <div class="oe_chatter">
+          <field name="message_follower_ids"/>
+          <field name="activity_ids"/>
+          <field name="message_ids"/>
+        </div>
+      </form>
+    </field>
+  </record>
+
+  <record id="view_vd6_ticket_tree" model="ir.ui.view">
+    <field name="name">vd6.ticket.tree</field>
+    <field name="model">project.task</field>
+    <field name="arch" type="xml">
+      <tree string="Ticket Vòng đời 6">
+        <field name="vd6_ma_ticket"/>
+        <field name="name"/>
+        <field name="vd6_ma_gd_goc"/>
+        <field name="vd6_loai_th"/>
+        <field name="vd6_loai_ticket"/>
+        <field name="vd6_phuong_an_de_xuat"/>
+        <field name="vd6_so_tien" sum="Tổng"/>
+        <field name="vd6_approver_role"/>
+        <field name="stage_id"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_vd6_ticket_search" model="ir.ui.view">
+    <field name="name">vd6.ticket.search</field>
+    <field name="model">project.task</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name"/>
+        <field name="vd6_ma_gd_goc"/>
+        <field name="vd6_loai_th"/>
+        <filter name="f_open" string="Đang mở" domain="[('stage_id.fold','=',False)]"/>
+        <filter name="f_khach" string="Ticket khách" domain="[('vd6_loai_ticket','=','TICKET_KHACH')]"/>
+        <filter name="f_noibo" string="Ticket nội bộ" domain="[('vd6_loai_ticket','=','TICKET_NOI_BO')]"/>
+        <group expand="0" string="Nhóm theo">
+          <filter name="g_th" string="Tình huống" context="{'group_by':'vd6_loai_th'}"/>
+          <filter name="g_stage" string="Trạng thái" context="{'group_by':'stage_id'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+
+  <record id="action_vd6_ticket" model="ir.actions.act_window">
+    <field name="name">Ticket Vòng đời 6</field>
+    <field name="res_model">project.task</field>
+    <field name="view_mode">tree,form</field>
+    <field name="domain">[('is_vd6','=',True)]</field>
+    <field name="context">{'default_is_vd6': True}</field>
+    <field name="search_view_id" ref="view_vd6_ticket_search"/>
+  </record>
+
+  <record id="action_vd6_ticket_tree" model="ir.actions.act_window.view">
+    <field name="sequence">1</field>
+    <field name="view_mode">tree</field>
+    <field name="view_id" ref="view_vd6_ticket_tree"/>
+    <field name="act_window_id" ref="action_vd6_ticket"/>
+  </record>
+  <record id="action_vd6_ticket_form" model="ir.actions.act_window.view">
+    <field name="sequence">2</field>
+    <field name="view_mode">form</field>
+    <field name="view_id" ref="view_vd6_form_primary"/>
+    <field name="act_window_id" ref="action_vd6_ticket"/>
+  </record>
+
+  <!-- Cấu hình ánh xạ nhóm (không gắn menu) -->
+  <record id="view_vd6_rule_tree" model="ir.ui.view">
+    <field name="name">vd6.rule.tree</field>
+    <field name="model">octa.vd6.assign.rule</field>
+    <field name="arch" type="xml">
+      <tree editable="bottom">
+        <field name="loai_th"/>
+        <field name="team_id"/>
+        <field name="role"/>
+      </tree>
+    </field>
+  </record>
+  <record id="action_vd6_rule" model="ir.actions.act_window">
+    <field name="name">Ánh xạ nhóm theo tình huống</field>
+    <field name="res_model">octa.vd6.assign.rule</field>
+    <field name="view_mode">tree</field>
+  </record>
+
+</odoo>
